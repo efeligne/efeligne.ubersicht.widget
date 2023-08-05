@@ -1,46 +1,66 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, css } from 'uebersicht';
 
-export const refreshFrequency = 120000; // ms
+export const refreshFrequency = 120000;
 
-export const command = 'df -k -t  apfs';
+export const command = 'df -k -t apfs';
 
-export const className = css` 
+export const styles = (top) => css` 
   background: transparent;
   border-radius: 1rem;
   position: absolute;
-  top: calc(40% - 200px);
-  right: calc(50% - 320px);
+  top: ${top};
+  left: 1rem;
 `;
 
-const progressContainer = css`
-  width: 640px;
-  height: 25px;
-  background: rgba(251, 251, 253, .1);
-  position: relative;
-  border-radius: 1rem;
-`;
+export const className = styles('5rem');
 
-const progressBar = (width) => css`
-  background: rgba(251, 251, 253, .2);
-  width: ${width}%;
-  height: 100%;
-  border-radius: 1rem;
-`;
+export function ProgressBar(label, percentage) {
+  const progressContainer = css`
+    width: 15rem;
+    height: 3px;
+    background: #487198;
+    position: relative;
+  `;
 
-const progressLabel = css`
-  background: transparent;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  color: white;
-  font-family: Courier New;
-  font-variant: small-caps;
-  letter-spacing: 0.12rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+  const progressBar = (width) => css`
+    background: #112c42;
+    width: ${width}%;
+    height: 3px;
+  `;
+
+  const progressLabel = css`
+    background: transparent;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: -1.75rem;
+    padding: 0 1rem;
+    position: absolute;
+    text-align: right;
+    color: #112c42;
+    font-family: 'JetBrainsMono Nerd Font';
+    letter-spacing: 0.12rem;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: start;
+    align-items: center;
+    gap: 0.5rem;
+  `;
+
+  const progressLabelIcon = css`
+    font-size: 1.5rem;
+  `;
+
+  return (
+    <div className={progressContainer}>
+      <div className={progressLabel}>
+        <span>{percentage}%</span>
+        <span className={progressLabelIcon}>{label}</span>
+      </div>
+      <div className={progressBar(percentage)} />
+    </div>
+  );
+}
 
 const toGB = (kb) => Math.round(kb / 1024 ** 2);
 
@@ -56,10 +76,5 @@ export const render = ({ output }) => {
 
   const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
 
-  return (
-    <div className={progressContainer}>
-      <div className={progressLabel}>Disk usage: {used}%</div>
-      <div className={progressBar(used)} />
-    </div>
-  );
+  return ProgressBar('\udb80\udeca', used);
 };
