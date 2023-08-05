@@ -3,7 +3,7 @@ import { React, css } from 'uebersicht';
 
 export const refreshFrequency = 1000;
 
-export const command = 'date "+%w %d %B %l:%M %p"';
+export const command = 'date "+%w %d %B %l %M %p"';
 
 export const className = css`
   @keyframes blink {
@@ -83,7 +83,8 @@ const getSuffix = (numDay) => {
 
 export const render = ({ output }) => {
   const dateParts = output.split(' ');
-  const [hours, minutes] = dateParts[4].split(':');
+  const hours = dateParts[3];
+  const minutes = dateParts[4];
   const dayHalf = dateParts[5];
   const dayName = dayNames[dateParts[0] - 1];
   const day = dateParts[1];
