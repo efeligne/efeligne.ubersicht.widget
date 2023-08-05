@@ -3,7 +3,7 @@ import { React, css } from 'uebersicht';
 
 export const refreshFrequency = 1000;
 
-export const command = 'date "+%w %d %B %l %M %p"';
+export const command = 'date "+%A_%d_%B_%l_%M_%p"';
 
 export const className = css`
   @keyframes blink {
@@ -69,11 +69,6 @@ const dayNameStyle = {
   letterSpacing: '0.25rem',
 };
 
-const dayNames = [
-  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
-  'Saturday', 'Sunday',
-];
-
 const getSuffix = (numDay) => {
   if (numDay === 1 || numDay === 21 || numDay === 31) return 'st';
   if (numDay === 2 || numDay === 22) return 'nd';
@@ -81,15 +76,18 @@ const getSuffix = (numDay) => {
   return 'th';
 };
 
+const dateHandler = (dateString) => dateString
+  .split('_')
+  .map((part, i) => {
+    const trimmed = part.trim();
+    if (i === 2) return trimmed.toUpperCase();
+    if (i === 5) return ` ${trimmed}`;
+    return trimmed;
+  });
+
 export const render = ({ output }) => {
-  const dateParts = output.split(' ');
-  const hours = dateParts[3];
-  const minutes = dateParts[4];
-  const dayHalf = dateParts[5];
-  const dayName = dayNames[dateParts[0] - 1];
-  const day = dateParts[1];
+  const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);
   const suffix = getSuffix(Number(day));
-  const month = `${dateParts[2]}`;
 
   return (
     <aside style={parentBlockStyle}>
@@ -99,7 +97,7 @@ export const render = ({ output }) => {
       <svg width="179" height="44" viewBox="0 0 179 44">
         <path d="M3.67464 3.14286H175.325V42H177V2H2V42H3.67464V3.14286Z" stroke="#112c42" strokeWidth="2" />
       </svg>
-      <span style={monthStyle}>{month.toUpperCase()}</span>
+      <span style={monthStyle}>{month}</span>
       <svg width="179" height="44" viewBox="0 0 179 44">
         <path d="M3.67464 2H2V42H177V2H175.325V40.8571H3.67464V2Z" stroke="#112c42" strokeWidth="2" />
       </svg>
