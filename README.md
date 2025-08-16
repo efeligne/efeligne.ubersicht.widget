@@ -6,7 +6,7 @@ See: [felixhageloh/uebersicht](https://github.com/felixhageloh/uebersicht)
 
 **The following fonts are used in the widget:**
 
-* Snell Roundhand
-* Courier New
-* New York
-* JetBrainsMono Nerd Font
+- Snell Roundhand
+- Courier New
+- New York
+- JetBrainsMono Nerd Font
