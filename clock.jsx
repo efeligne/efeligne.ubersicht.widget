@@ -17,14 +17,14 @@ export const className = css`
   width: 26rem;
   height: 15rem;
   top: 2rem;
-  left: calc(50% - 13rem);
+  left: calc(50% - 13.05rem);
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
 `;
 
 const parentBlockStyle = {
-  color: '#112c42',
+  color: '#111111',
   fontFamily: 'Snell Roundhand',
   fontSize: '2rem',
   boxSizing: 'border-box',
@@ -39,7 +39,7 @@ const hrStyle = {
   flexGrow: 1,
   height: '2px',
   border: 0,
-  backgroundColor: '#112c42',
+  backgroundColor: '#111111',
 };
 
 const timeBlockStyle = {
@@ -76,9 +76,8 @@ const getSuffix = (numDay) => {
   return 'th';
 };
 
-const dateHandler = (dateString) => dateString
-  .split('_')
-  .map((part, i) => {
+const dateHandler = (dateString) =>
+  dateString.split('_').map((part, i) => {
     const trimmed = part.trim();
     if (i === 2) return trimmed.toUpperCase();
     if (i === 5) return ` ${trimmed}`;
@@ -95,11 +94,19 @@ export const render = ({ output }) => {
         The {day} <sup>{suffix}</sup>
       </span>
       <svg width="179" height="44" viewBox="0 0 179 44">
-        <path d="M3.67464 3.14286H175.325V42H177V2H2V42H3.67464V3.14286Z" stroke="#112c42" strokeWidth="2" />
+        <path
+          d="M3.67464 3.14286H175.325V42H177V2H2V42H3.67464V3.14286Z"
+          stroke="#111111"
+          strokeWidth="2"
+        />
       </svg>
       <span style={monthStyle}>{month}</span>
       <svg width="179" height="44" viewBox="0 0 179 44">
-        <path d="M3.67464 2H2V42H177V2H175.325V40.8571H3.67464V2Z" stroke="#112c42" strokeWidth="2" />
+        <path
+          d="M3.67464 2H2V42H177V2H175.325V40.8571H3.67464V2Z"
+          stroke="#111111"
+          strokeWidth="2"
+        />
       </svg>
       <span style={dayNameStyle}>{dayName}</span>
       <div style={timeBlockStyle}>

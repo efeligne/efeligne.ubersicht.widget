@@ -5,7 +5,7 @@ export const refreshFrequency = 120000;
 
 export const command = 'df -k -t apfs';
 
-export const styles = (top) => css` 
+export const styles = (top) => css`
   background: transparent;
   border-radius: 1rem;
   position: absolute;
@@ -19,12 +19,12 @@ export function ProgressBar(label, percentage) {
   const progressContainer = css`
     width: 15rem;
     height: 3px;
-    background: #487198;
+    background: #555555;
     position: relative;
   `;
 
   const progressBar = (width) => css`
-    background: #112c42;
+    background: #111111;
     width: ${width}%;
     height: 3px;
   `;
@@ -37,14 +37,14 @@ export function ProgressBar(label, percentage) {
     padding: 0 1rem;
     position: absolute;
     text-align: right;
-    color: #112c42;
+    color: #111111;
     font-family: 'JetBrainsMono Nerd Font';
     letter-spacing: 0.12rem;
     display: flex;
     flex-direction: row-reverse;
     justify-content: start;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
   `;
 
   const progressLabelIcon = css`
@@ -70,7 +70,7 @@ export const render = ({ output }) => {
   const sizeGB = toGB(+size.split(' ').filter(Boolean)[1]);
 
   const totalUsed = outputLines.reduce((accumulator, current) => {
-    const [,, used] = current.split(' ').filter(Boolean);
+    const [, , used] = current.split(' ').filter(Boolean);
     return accumulator + +used;
   }, 0);
 
