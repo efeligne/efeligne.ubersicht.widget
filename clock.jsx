@@ -57,16 +57,11 @@ const colonStyle = {
   animation: 'blink 1s linear infinite',
 };
 
-const monthStyle = {
+const dayNameStyle = {
   letterSpacing: '0.25rem',
   fontSize: '4rem',
   fontFamily: 'New York',
   paddingLeft: '0.3rem',
-};
-
-const dayNameStyle = {
-  fontSize: '3rem',
-  letterSpacing: '0.25rem',
 };
 
 const getSuffix = (numDay) => {
@@ -79,7 +74,7 @@ const getSuffix = (numDay) => {
 const dateHandler = (dateString) =>
   dateString.split('_').map((part, i) => {
     const trimmed = part.trim();
-    if (i === 2) return trimmed.toUpperCase();
+    if (i === 0) return trimmed.toUpperCase();
     if (i === 5) return ` ${trimmed}`;
     return trimmed;
   });
@@ -91,23 +86,8 @@ export const render = ({ output }) => {
   return (
     <aside style={parentBlockStyle}>
       <span>
-        The {day} <sup>{suffix}</sup>
+        The {day} <sup>{suffix}</sup> of {month}
       </span>
-      <svg width="179" height="44" viewBox="0 0 179 44">
-        <path
-          d="M3.67464 3.14286H175.325V42H177V2H2V42H3.67464V3.14286Z"
-          stroke="#111111"
-          strokeWidth="2"
-        />
-      </svg>
-      <span style={monthStyle}>{month}</span>
-      <svg width="179" height="44" viewBox="0 0 179 44">
-        <path
-          d="M3.67464 2H2V42H177V2H175.325V40.8571H3.67464V2Z"
-          stroke="#111111"
-          strokeWidth="2"
-        />
-      </svg>
       <span style={dayNameStyle}>{dayName}</span>
       <div style={timeBlockStyle}>
         <hr style={hrStyle} />
