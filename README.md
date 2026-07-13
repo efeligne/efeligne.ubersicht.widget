@@ -2,7 +2,7 @@
 
 See: [felixhageloh/uebersicht](https://github.com/felixhageloh/uebersicht)
 
-<img width="1680" height="1050" alt="Screenshot 2025-08-18 at 16 51 44" src="https://github.com/user-attachments/assets/7f6bdb95-1133-4fb1-9b3f-476244d7d4f8" />
+<img width="3360" height="2100" alt="tg_image_1228996188" src="https://github.com/user-attachments/assets/5e880f74-80ab-4237-aaf7-f8943b36044f" />
 
 **The following fonts are used in the widget:**
 
