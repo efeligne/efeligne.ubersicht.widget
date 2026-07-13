@@ -19,8 +19,13 @@ export const className = css`
   max-width: 45vw;
 
   @keyframes wave {
-    0%, 100% { transform: scaleY(0.4); }
-    50% { transform: scaleY(1.2); }
+    0%,
+    100% {
+      transform: scaleY(0.4);
+    }
+    50% {
+      transform: scaleY(1.2);
+    }
   }
 
   .bars {

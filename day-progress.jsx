@@ -1,7 +1,6 @@
 import { ProgressBar } from './disk-usage.jsx';
 
 export const refreshFrequency = 60000;
-export const command = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
 
 export const className = `
   top: 12.5rem;

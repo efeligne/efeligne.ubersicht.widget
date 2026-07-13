@@ -16,16 +16,19 @@ export const styles = (top) => css`
 export const className = styles('5rem');
 
 export function ProgressBar(label, percentage) {
+  const isValid = typeof percentage === 'number' && !Number.isNaN(percentage);
+  const displayValue = isValid ? `${percentage}%` : percentage;
+  const width = isValid ? percentage : 0;
   const progressContainer = css`
     width: 15rem;
     height: 3px;
-    background: #555555;
+    background: #777777;
     position: relative;
   `;
 
-  const progressBar = (width) => css`
+  const progressBar = (widthPercentage) => css`
     background: #111111;
-    width: ${width}%;
+    width: ${widthPercentage}%;
     height: 3px;
   `;
 
@@ -54,10 +57,10 @@ export function ProgressBar(label, percentage) {
   return (
     <div className={progressContainer}>
       <div className={progressLabel}>
-        <span>{percentage}%</span>
+        <span>{displayValue}</span>
         <span className={progressLabelIcon}>{label}</span>
       </div>
-      <div className={progressBar(percentage)} />
+      <div className={progressBar(width)} />
     </div>
   );
 }
@@ -66,6 +69,7 @@ const toGB = (kb) => Math.round(kb / 1024 ** 2);
 
 export const render = ({ output }) => {
   const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
+  if (!outputLines || outputLines.length === 0) return ProgressBar('\udb80\udeca', 'N/A');
   const size = outputLines[0] ?? '';
   const sizeGB = toGB(+size.split(' ').filter(Boolean)[1]);
 

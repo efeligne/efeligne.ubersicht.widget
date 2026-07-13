@@ -7,4 +7,7 @@ export const className = `
 
 export const refreshFrequency = 5000;
 export const command = 'osascript -e "output volume of (get volume settings)"';
-export const render = ({ output }) => ProgressBar('', Number(output.trim()));
+export const render = ({ output }) => {
+  const vol = output ? Number(output.trim()) : NaN;
+  return ProgressBar('', Number.isNaN(vol) ? 'N/A' : vol);
+};

@@ -1,6 +1,6 @@
 import { ProgressBar } from './disk-usage.jsx';
 
-export const refreshFrequency = 10000;
+export const refreshFrequency = 60000;
 export const command = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
 
 export const className = `
@@ -9,7 +9,7 @@ export const className = `
 `;
 
 export const render = ({ output }) => {
-  const outputString = output ? String(output).trim() : '0';
+  const outputString = output ? String(output).trim() : '';
   const signal = parseInt(outputString, 10);
-  return ProgressBar('󰖩', Math.min((signal + 100) * 2, 100));
+  return ProgressBar('󰖩', Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100));
 };

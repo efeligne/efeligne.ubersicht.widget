@@ -5,9 +5,7 @@ export const refreshFrequency = 600000;
 
 export const location = 'Saint_Petersburg,Russia';
 
-const url = location
-  ? `wttr.in/${location}?format=%C|%t`
-  : 'wttr.in/?format=%C|%t';
+const url = location ? `wttr.in/${location}?format=%C|%t` : 'wttr.in/?format=%C|%t';
 
 export const command = `curl -fsS '${url}' 2>/dev/null || echo "N/A|N/A"`;
 

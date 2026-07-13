@@ -80,6 +80,7 @@ const dateHandler = (dateString) =>
   });
 
 export const render = ({ output }) => {
+  if (!output) return null;
   const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);
   const suffix = getSuffix(Number(day));
 
