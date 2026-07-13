@@ -29,20 +29,22 @@ return ""
 [[ -n "$RESULT" ]] && echo "$RESULT" && exit 0
 
 # VLC
-RESULT=$(osascript -e '
-try
-  tell application "VLC"
-    if it is running and playing then
-      set trackName to name of current item
-      if trackName is not "" then
-        return "󰕼 " & trackName
-      end if
-    end if
-  end tell
-end try
-return ""
-' 2>/dev/null)
-[[ -n "$RESULT" ]] && echo "$RESULT" && exit 0
+if pgrep -x "VLC" > /dev/null 2>&1; then
+  RESULT=$(osascript -e '
+    try
+      tell application "VLC"
+        if playing then
+          set trackName to name of current item
+          if trackName is not "" then
+            return "󰕼 " & trackName
+          end if
+        end if
+      end tell
+    end try
+    return ""
+  ' 2>/dev/null)
+  [[ -n "$RESULT" ]] && echo "$RESULT" && exit 0
+fi
 
 # Swinsian
 RESULT=$(osascript -e '
