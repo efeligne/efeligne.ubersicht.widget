@@ -14,4 +14,31 @@ export default css`
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: scaleY(0.4);
+    }
+    50% {
+      transform: scaleY(1.2);
+    }
+  }
+
+  .bars {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .bar {
+    display: inline-block;
+    width: 3px;
+    height: 10px;
+    margin-right: 2px;
+    background: #111111;
+    border-radius: 2px;
+    transform-origin: bottom;
+    animation: wave 0.5s ease-in-out infinite;
+  }
 `;
