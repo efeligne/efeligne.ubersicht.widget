@@ -19,7 +19,7 @@ try
   if application "Music" is running then
     tell application "Music"
       if player state is playing then
-        return " " & name of current track & "  —  " & artist of current track
+        return " " & name of current track & "  —  " & artist of current track
       end if
     end tell
   end if
@@ -29,7 +29,7 @@ return ""
 [[ -n "$RESULT" ]] && echo "$RESULT" && exit 0
 
 # VLC
-if pgrep -x "VLC" > /dev/null 2>&1; then
+if pgrep -x "VLC" >/dev/null 2>&1; then
   RESULT=$(osascript -e '
     try
       tell application "VLC"
@@ -51,7 +51,7 @@ RESULT=$(osascript -e '
 try
   tell application "Swinsian"
     if it is running and player state is playing then
-      return " " & name of current track & "  —  " & artist of current track
+      return "󰥛 " & name of current track & "  —  " & artist of current track
     end if
   end tell
 end try
@@ -63,10 +63,10 @@ return ""
 RESULT=$(osascript -e '
 try
   tell application "VOX"
-    if it is running and player state is playing then
-      set trackName to name of current track
-      set trackArtist to artist of current track
-      return " " & trackName & "  —  " & trackArtist
+    if it is running and player state is 1 then
+      set trackName to track
+      set trackArtist to artist
+      return " " & trackName & "  —  " & trackArtist
     end if
   end tell
 end try
