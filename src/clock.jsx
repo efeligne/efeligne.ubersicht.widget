@@ -89,10 +89,12 @@ function widget({ output }) {
   );
 }
 
-const runner = (dispatch) => () => {
-  const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
-  const type = 'SET_TIME';
-  run(cmd).then(dispatcher(type, dispatch));
+export default {
+  refreshTimeout: 1000,
+  runner: (dispatch) => () => {
+    const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
+    const type = 'SET_TIME';
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
 };
-
-export default { refreshTimeout: 1000, runner, widget };

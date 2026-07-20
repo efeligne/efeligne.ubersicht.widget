@@ -42,10 +42,12 @@ function widget({ output }) {
   );
 }
 
-const runner = (dispatch) => () => {
-  const cmd = `curl -fsS '${url}' 2>/dev/null || echo "N/A|N/A"`;
-  const type = 'SET_WEATHER';
-  run(cmd).then(dispatcher(type, dispatch));
+export default {
+  refreshTimeout: 600000,
+  runner: (dispatch) => () => {
+    const cmd = `curl -fsS '${url}' 2>/dev/null || echo "N/A|N/A"`;
+    const type = 'SET_WEATHER';
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
 };
-
-export default { refreshTimeout: 600000, runner, widget };
