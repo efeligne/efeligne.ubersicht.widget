@@ -64,7 +64,6 @@ const dayNameStyle = {
   paddingLeft: '0.3rem',
 };
 
-// eslint-disable-next-line react/prop-types
 function widget({ output }) {
   if (!output) return null;
   const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);

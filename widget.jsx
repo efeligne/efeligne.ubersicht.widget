@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './src/dispatcher';
+import { React } from 'uebersicht';
 import css from './src/global-css';
 import clock from './src/clock.jsx';
+import weather from './src/weather.jsx';
 
 // disable standard Ubersicht refreshFrequency and command,
 // cause "use" function is used instead
@@ -16,21 +16,14 @@ export const initialState = {
   weather: 'Загрузка...',
 };
 
-const weatherRefreshFrequency = 1800000;
-const weatherRunner = (dispatch) => () => {
-  const cmd = 'curl -s "wttr.in/?format=1"';
-  const type = 'SET_WEATHER';
-  run(cmd).then(dispatcher(type, dispatch));
-};
-
 export const init = (dispatch) => {
   // run at startup
   clock.runner(dispatch)();
-  weatherRunner(dispatch)();
+  weather.runner(dispatch)();
 
   // run every refreshFrequency
   setInterval(clock.runner(dispatch), clock.refreshTimeout);
-  setInterval(weatherRunner(dispatch), weatherRefreshFrequency);
+  setInterval(weather.runner(dispatch), weather.refreshTimeout);
 };
 
 export const updateState = (event, previousState) => {
@@ -45,14 +38,11 @@ export const updateState = (event, previousState) => {
 };
 
 function Widget(state) {
-  const { time, weather } = state;
   return (
-    <>
-      <clock.widget output={time} />
-      <div className="weather-section" style={{ fontSize: '14px', marginTop: '5px' }}>
-        {weather}
-      </div>
-    </>
+    <React.Fragment>
+      <clock.widget output={state.time} />
+      <weather.widget output={state.weather} />
+    </React.Fragment>
   );
 }
 
