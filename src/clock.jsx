@@ -2,6 +2,9 @@
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
 
+const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
+const type = 'SET_TIME';
+
 const getSuffix = (numDay) => {
   if (numDay === 1 || numDay === 21 || numDay === 31) return 'st';
   if (numDay === 2 || numDay === 22) return 'nd';
@@ -91,9 +94,8 @@ function widget({ output }) {
 
 export default {
   refreshTimeout: 1000,
+  type,
   runner: (dispatch) => () => {
-    const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
-    const type = 'SET_TIME';
     run(cmd).then(dispatcher(type, dispatch));
   },
   widget: React.memo(widget),

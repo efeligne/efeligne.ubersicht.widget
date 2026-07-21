@@ -2,6 +2,9 @@
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
 
+const cmd = 'efeligne.ubersicht.widget/src/now-playing.sh';
+const type = 'SET_NOW_PLAYING';
+
 const parentBlockStyle = {
   position: 'absolute',
   bottom: '1rem',
@@ -37,9 +40,8 @@ function widget({ output }) {
 
 export default {
   refreshTimeout: 5000,
+  type,
   runner: (dispatch) => () => {
-    const cmd = 'efeligne.ubersicht.widget/src/now-playing.sh';
-    const type = 'SET_NOW_PLAYING';
     run(cmd).then(dispatcher(type, dispatch));
   },
   widget: React.memo(widget),

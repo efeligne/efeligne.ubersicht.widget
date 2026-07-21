@@ -4,6 +4,7 @@ import css from './src/global-css';
 import clock from './src/clock.jsx';
 import weather from './src/weather.jsx';
 import nowPlaying from './src/now-playing.jsx';
+import diskUsage from './src/disk-usage.jsx';
 
 // disable standard Ubersicht refreshFrequency and command,
 // cause "use" function is used instead
@@ -16,6 +17,7 @@ export const initialState = {
   time: '',
   weather: 'Загрузка...',
   playing: '',
+  disk: '',
 };
 
 export const init = (dispatch) => {
@@ -23,21 +25,25 @@ export const init = (dispatch) => {
   clock.runner(dispatch)();
   weather.runner(dispatch)();
   nowPlaying.runner(dispatch)();
+  diskUsage.runner(dispatch)();
 
   // run every refreshFrequency
   setInterval(clock.runner(dispatch), clock.refreshTimeout);
   setInterval(weather.runner(dispatch), weather.refreshTimeout);
   setInterval(nowPlaying.runner(dispatch), nowPlaying.refreshTimeout);
+  setInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout);
 };
 
 export const updateState = (event, previousState) => {
   switch (event.type) {
-    case 'SET_TIME':
+    case clock.type:
       return { ...previousState, time: event.data };
-    case 'SET_WEATHER':
+    case weather.type:
       return { ...previousState, weather: event.data };
-    case 'SET_NOW_PLAYING':
+    case nowPlaying.type:
       return { ...previousState, playing: event.data };
+    case diskUsage.type:
+      return { ...previousState, disk: event.data };
     default:
       return previousState;
   }
@@ -49,6 +55,7 @@ function Widget(state) {
       <clock.widget output={state.time} />
       <weather.widget output={state.weather} />
       <nowPlaying.widget output={state.playing} />
+      <diskUsage.widget output={state.disk} />
     </React.Fragment>
   );
 }

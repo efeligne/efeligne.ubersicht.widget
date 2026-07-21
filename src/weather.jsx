@@ -3,8 +3,9 @@ import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
 
 const location = 'Saint_Petersburg,Russia';
-
 const url = location ? `wttr.in/${location}?format=%C|%t` : 'wttr.in/?format=%C|%t';
+const cmd = `curl -fsS '${url}' 2>/dev/null || echo "N/A|N/A"`;
+const type = 'SET_WEATHER';
 
 const getWeatherIcon = (condition) => {
   const c = condition.toLowerCase();
@@ -44,9 +45,8 @@ function widget({ output }) {
 
 export default {
   refreshTimeout: 600000,
+  type,
   runner: (dispatch) => () => {
-    const cmd = `curl -fsS '${url}' 2>/dev/null || echo "N/A|N/A"`;
-    const type = 'SET_WEATHER';
     run(cmd).then(dispatcher(type, dispatch));
   },
   widget: React.memo(widget),
