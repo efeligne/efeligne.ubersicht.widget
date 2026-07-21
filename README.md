@@ -63,6 +63,15 @@ Each module in `src/` exports `{ refreshTimeout, type, runner, widget }`, decoup
 - **Now Playing** — supports Spotify, Apple Music, VLC, Swinsian, and VOX
 - **Brightness** — requires the built-in display; the `BrightnessCLI` binary is included
 
+## Usage Notes
+
+- **Weather** — uses [wttr.in](https://wttr.in). Requires an internet connection. Shows `N/A` when unavailable.
+- **Now Playing** — supports Spotify, Apple Music, VLC, Swinsian, and VOX. Only one active player is detected at a time.
+- **Volume** — detected only for devices that support software volume control. External monitors without audio control show `N/A`.
+- **Brightness** — detected only for the main built-in display. External monitors are not supported.
+- **Disk** — tracks only APFS-formatted volumes. Other filesystems (HFS+, exFAT, etc.) are not included.
+- **Widgets may show `N/A`** when the underlying command fails to retrieve data (e.g., no battery on a desktop Mac, no Wi‑Fi hardware, unsupported audio device).
+
 ## Fonts
 
 - Snell Roundhand
