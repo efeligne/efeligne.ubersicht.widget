@@ -4,7 +4,7 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '7.5rem';
+const topOffset = config.positions.memory;
 const type = 'SET_MEMORY_USAGE';
 const cmd = 'memory_pressure | grep System-wide | grep -Eo "\\d+%" | cut -d% -f1';
 

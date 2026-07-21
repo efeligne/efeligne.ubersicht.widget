@@ -4,7 +4,7 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '12.5rem';
+const topOffset = config.positions.battery;
 const type = 'SET_BATTERY_LEVEL';
 const cmd = 'pmset -g batt | grep -Eo "\\d+%" | cut -d% -f1';
 

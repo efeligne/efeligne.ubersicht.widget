@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { css } from 'uebersicht';
+import config from '../lib/config.js';
 
 export default css`
   @keyframes blink {
@@ -36,7 +37,7 @@ export default css`
     width: 3px;
     height: 10px;
     margin-right: 2px;
-    background: #111111;
+    background: ${config.colors.foreground};
     border-radius: 2px;
     transform-origin: bottom;
     animation: wave 0.5s ease-in-out infinite;

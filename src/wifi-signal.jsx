@@ -4,7 +4,7 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '10rem';
+const topOffset = config.positions.wifi;
 const type = 'SET_WIFI_SIGNAL';
 const cmd = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
 

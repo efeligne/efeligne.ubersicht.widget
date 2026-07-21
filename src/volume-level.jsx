@@ -4,7 +4,7 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '5rem';
+const topOffset = config.positions.volume;
 const type = 'SET_VOLUME_LEVEL';
 const cmd = 'osascript -e "return output volume of (get volume settings)"';
 

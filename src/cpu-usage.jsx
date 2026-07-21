@@ -4,13 +4,13 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '10rem';
+const topOffset = config.positions.cpu;
 const type = 'SET_CPU_USAGE';
-const cmd = 'top -l 1 | grep -E "^CPU" | grep -Eo "\\d+\\.\\d+% idle" | cut -d% -f1';
+const cmd = `top -l 2 -n 0 2>/dev/null | awk '/^CPU/{if(++c==2) printf "%.0f\\n", $3+$5}'`;
 
 function widget({ output }) {
-  const idle = output ? Number(output.trim()) : NaN;
-  const percentage = Number.isNaN(idle) ? 'N/A' : Math.floor(100 - idle);
+  const val = output ? Number(output.trim()) : NaN;
+  const percentage = Number.isNaN(val) ? 'N/A' : Math.round(val);
 
   return <ProgressBar label={config.icons.cpu} percentage={percentage} top={topOffset} />;
 }

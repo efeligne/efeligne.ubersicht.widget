@@ -4,15 +4,18 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '7.5rem';
+const topOffset = config.positions.brightness;
 const type = 'SET_BRIGHTNESS_LEVEL';
 const cmd = 'efeligne.ubersicht.widget/exec/BrightnessCLI';
 
 function widget({ output }) {
+  const trimmed = output?.trim();
+  const percentage = trimmed ? Number(trimmed) : NaN;
+
   return (
     <ProgressBar
       label={config.icons.brightness}
-      percentage={Number(output.trim())}
+      percentage={Number.isNaN(percentage) ? 'N/A' : percentage}
       top={topOffset}
       side="right"
     />

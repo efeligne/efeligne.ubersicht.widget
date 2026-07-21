@@ -4,7 +4,7 @@ import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '5rem';
+const topOffset = config.positions.disk;
 const type = 'SET_DISK_USAGE';
 const cmd = 'df -k -t apfs';
 

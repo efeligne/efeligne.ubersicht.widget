@@ -3,7 +3,7 @@ import { React } from 'uebersicht';
 import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
-const topOffset = '12.5rem';
+const topOffset = config.positions.dayProgress;
 const type = 'SET_DAY_PROGRESS';
 
 function widget({ output }) {

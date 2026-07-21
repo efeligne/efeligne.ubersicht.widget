@@ -49,17 +49,25 @@ export const init = (dispatch) => {
   brightnessLevel.runner(dispatch)();
 
   // run every refresh frequency
-  setInterval(clock.runner(dispatch), clock.refreshTimeout);
-  setInterval(weather.runner(dispatch), weather.refreshTimeout);
-  setInterval(cpuUsage.runner(dispatch), cpuUsage.refreshTimeout);
-  setInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout);
-  setInterval(wifiSignal.runner(dispatch), wifiSignal.refreshTimeout);
-  setInterval(nowPlaying.runner(dispatch), nowPlaying.refreshTimeout);
-  setInterval(dayProgress.runner(dispatch), dayProgress.refreshTimeout);
-  setInterval(memoryUsage.runner(dispatch), memoryUsage.refreshTimeout);
-  setInterval(volumeLevel.runner(dispatch), volumeLevel.refreshTimeout);
-  setInterval(batteryLevel.runner(dispatch), batteryLevel.refreshTimeout);
-  setInterval(brightnessLevel.runner(dispatch), brightnessLevel.refreshTimeout);
+  const intervals = [
+    setInterval(clock.runner(dispatch), clock.refreshTimeout),
+    setInterval(weather.runner(dispatch), weather.refreshTimeout),
+    setInterval(cpuUsage.runner(dispatch), cpuUsage.refreshTimeout),
+    setInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout),
+    setInterval(wifiSignal.runner(dispatch), wifiSignal.refreshTimeout),
+    setInterval(nowPlaying.runner(dispatch), nowPlaying.refreshTimeout),
+    setInterval(dayProgress.runner(dispatch), dayProgress.refreshTimeout),
+    setInterval(memoryUsage.runner(dispatch), memoryUsage.refreshTimeout),
+    setInterval(volumeLevel.runner(dispatch), volumeLevel.refreshTimeout),
+    setInterval(batteryLevel.runner(dispatch), batteryLevel.refreshTimeout),
+    setInterval(brightnessLevel.runner(dispatch), brightnessLevel.refreshTimeout),
+  ];
+
+  return intervals;
+};
+
+export const destroy = (intervals) => {
+  intervals.forEach(clearInterval);
 };
 
 export const updateState = (event, previousState) => {

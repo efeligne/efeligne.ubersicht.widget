@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
 import config from '../lib/config.js';
 
 const { location } = config.weather;
@@ -58,11 +57,23 @@ function widget({ output }) {
   );
 }
 
+let cachedOutput = null;
+
 export default {
   refreshTimeout: config.refresh.weather,
   type,
   runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    run(cmd).then((output) => {
+      const data = output.trim();
+      if (data !== 'N/A|N/A') {
+        cachedOutput = data;
+        dispatch({ type, data });
+      } else if (cachedOutput !== null) {
+        dispatch({ type, data: cachedOutput });
+      } else {
+        dispatch({ type, data: 'N/A|N/A' });
+      }
+    });
   },
   widget: React.memo(widget),
 };
