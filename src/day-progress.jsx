@@ -7,10 +7,13 @@ const topOffset = '12.5rem';
 const type = 'SET_DAY_PROGRESS';
 
 function widget({ output }) {
+  const val = output ? Number(output) : NaN;
+  const percentage = Number.isNaN(val) ? 'N/A' : val;
+
   return (
     <ProgressBar
       label={config.icons.dayProgress}
-      percentage={output}
+      percentage={percentage}
       top={topOffset}
       side="right"
     />

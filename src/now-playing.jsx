@@ -12,7 +12,7 @@ const parentBlockStyle = {
   left: '1rem',
   color: config.colors.foreground,
   fontFamily: "'JetBrainsMono Nerd Font', 'Courier New', monospace",
-  fontSize: '0.85rem',
+  fontSize: '1rem',
   letterSpacing: '0.08rem',
   whiteSpace: 'nowrap',
   overflow: 'hidden',

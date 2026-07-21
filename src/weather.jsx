@@ -28,21 +28,31 @@ const weatherStyle = {
   right: '1rem',
   color: config.colors.foreground,
   fontFamily: "'JetBrainsMono Nerd Font', 'Courier New', monospace",
-  fontSize: '0.85rem',
+  fontSize: '1rem',
   letterSpacing: '0.08rem',
   whiteSpace: 'nowrap',
   display: 'flex',
+  alignItems: 'center',
   gap: '0.5rem',
+};
+
+const iconStyle = {
+  fontSize: '1.25rem',
 };
 
 function widget({ output }) {
   const raw = output ? output.trim() : 'N/A|N/A';
   const [condition, temp] = raw.split('|');
   if (!condition || condition === 'N/A')
-    return <span style={weatherStyle}>{config.icons.weather.unknown} N/A</span>;
+    return (
+      <span style={weatherStyle}>
+        <span style={iconStyle}>{config.icons.weather.unknown}</span>
+        <span>N/A</span>
+      </span>
+    );
   return (
     <aside style={weatherStyle}>
-      <span>{getWeatherIcon(condition)}</span>
+      <span style={iconStyle}>{getWeatherIcon(condition)}</span>
       <span>{temp}</span>
     </aside>
   );

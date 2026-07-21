@@ -34,6 +34,7 @@ function ProgressBar({ label, percentage, top, side = 'left' }) {
     textAlign: 'right',
     color: config.colors.foreground,
     fontFamily: "'JetBrainsMono Nerd Font'",
+    fontSize: '1rem',
     letterSpacing: '0.12rem',
     display: 'flex',
     flexDirection: 'row-reverse',
@@ -43,7 +44,7 @@ function ProgressBar({ label, percentage, top, side = 'left' }) {
   };
 
   const iconStyle = {
-    fontSize: '1.5rem',
+    fontSize: '1.25rem',
   };
 
   return (
