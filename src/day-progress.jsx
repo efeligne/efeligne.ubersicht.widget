@@ -1,16 +1,24 @@
 // eslint-disable-next-line import/no-unresolved
 import { React } from 'uebersicht';
+import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
 const topOffset = '12.5rem';
 const type = 'SET_DAY_PROGRESS';
 
 function widget({ output }) {
-  return <ProgressBar label="󱑸" percentage={output} top={topOffset} side="right" />;
+  return (
+    <ProgressBar
+      label={config.icons.dayProgress}
+      percentage={output}
+      top={topOffset}
+      side="right"
+    />
+  );
 }
 
 export default {
-  refreshTimeout: 60000,
+  refreshTimeout: config.refresh.dayProgress,
   type,
   runner: (dispatch) => () => {
     const now = new Date();

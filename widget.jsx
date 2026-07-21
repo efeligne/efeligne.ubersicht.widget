@@ -31,7 +31,7 @@ export const initialState = {
   battery: '',
   playing: '',
   brightness: '',
-  weather: 'Загрузка...',
+  weather: 'Loading...',
 };
 
 export const init = (dispatch) => {

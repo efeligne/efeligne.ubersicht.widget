@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
+import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
 const topOffset = '10rem';
@@ -12,11 +13,13 @@ function widget({ output }) {
   const signal = parseInt(outputString, 10);
   const percentage = Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100);
 
-  return <ProgressBar label="󰖩" percentage={percentage} top={topOffset} side="right" />;
+  return (
+    <ProgressBar label={config.icons.wifi} percentage={percentage} top={topOffset} side="right" />
+  );
 }
 
 export default {
-  refreshTimeout: 60000,
+  refreshTimeout: config.refresh.wifiSignal,
   type,
   runner: (dispatch) => () => {
     run(cmd).then(dispatcher(type, dispatch));

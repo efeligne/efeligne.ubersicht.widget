@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { React } from 'uebersicht';
+import config from '../lib/config.js';
 
 function ProgressBar({ label, percentage, top, side = 'left' }) {
   const isValid = typeof percentage === 'number' && !Number.isNaN(percentage);
@@ -7,7 +8,7 @@ function ProgressBar({ label, percentage, top, side = 'left' }) {
   const width = isValid ? percentage : 0;
 
   const containerStyle = {
-    background: '#777777',
+    background: config.colors.track,
     borderRadius: '1rem',
     position: 'absolute',
     top,
@@ -18,7 +19,7 @@ function ProgressBar({ label, percentage, top, side = 'left' }) {
   };
 
   const barStyle = {
-    background: '#111111',
+    background: config.colors.foreground,
     width: `${width}%`,
     height: '3px',
   };
@@ -31,7 +32,7 @@ function ProgressBar({ label, percentage, top, side = 'left' }) {
     padding: '0 1rem',
     position: 'absolute',
     textAlign: 'right',
-    color: '#111111',
+    color: config.colors.foreground,
     fontFamily: "'JetBrainsMono Nerd Font'",
     letterSpacing: '0.12rem',
     display: 'flex',

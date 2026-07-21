@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
+import config from '../lib/config.js';
 
 const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
 const type = 'SET_TIME';
@@ -21,7 +22,7 @@ const dateHandler = (dateString) =>
   });
 
 const parentBlockStyle = {
-  color: '#111111',
+  color: config.colors.foreground,
   fontFamily: 'Snell Roundhand',
   fontSize: '2rem',
   boxSizing: 'border-box',
@@ -42,7 +43,7 @@ const hrStyle = {
   flexGrow: 1,
   height: '2px',
   border: 0,
-  backgroundColor: '#111111',
+  backgroundColor: config.colors.foreground,
 };
 
 const timeBlockStyle = {
@@ -93,7 +94,7 @@ function widget({ output }) {
 }
 
 export default {
-  refreshTimeout: 1000,
+  refreshTimeout: config.refresh.clock,
   type,
   runner: (dispatch) => () => {
     run(cmd).then(dispatcher(type, dispatch));

@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
+import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
 const topOffset = '5rem';
@@ -13,7 +14,7 @@ function widget({ output }) {
   const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
 
   if (!outputLines || outputLines.length === 0) {
-    return <ProgressBar label={'\udb80\udeca'} percentage="N/A" top={topOffset} />;
+    return <ProgressBar label={config.icons.disk} percentage="N/A" top={topOffset} />;
   }
 
   const size = outputLines[0] ?? '';
@@ -26,11 +27,11 @@ function widget({ output }) {
 
   const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
 
-  return <ProgressBar label={'\udb80\udeca'} percentage={used} top={topOffset} />;
+  return <ProgressBar label={config.icons.disk} percentage={used} top={topOffset} />;
 }
 
 export default {
-  refreshTimeout: 120000,
+  refreshTimeout: config.refresh.diskUsage,
   type,
   runner: (dispatch) => () => {
     run(cmd).then(dispatcher(type, dispatch));

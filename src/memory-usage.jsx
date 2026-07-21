@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
+import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
 
 const topOffset = '7.5rem';
@@ -11,11 +12,11 @@ function widget({ output }) {
   const val = output ? Number(output.trim()) : NaN;
   const percentage = Number.isNaN(val) ? 'N/A' : 100 - val;
 
-  return <ProgressBar label={'\udb80\udf5b'} percentage={percentage} top={topOffset} />;
+  return <ProgressBar label={config.icons.memory} percentage={percentage} top={topOffset} />;
 }
 
 export default {
-  refreshTimeout: 5000,
+  refreshTimeout: config.refresh.memoryUsage,
   type,
   runner: (dispatch) => () => {
     run(cmd).then(dispatcher(type, dispatch));
