@@ -2,7 +2,7 @@
 
 A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht).
 
-<img width="3360" height="2100" alt="tg_image_1228996188" src="https://github.com/user-attachments/assets/5e880f74-80ab-4237-aaf7-f8943b36044f" />
+<img width="1680" height="1050" alt="Screenshot 2026-07-21 at 07 59 19" src="https://github.com/user-attachments/assets/c22bcd12-a283-4d0a-b4d9-69b4a54b7bd2" />
 
 ## Widgets
 
