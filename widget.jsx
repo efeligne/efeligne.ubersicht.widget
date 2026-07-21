@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React } from 'uebersicht';
+import { error } from 'console';
+
 import css from './src/global-css';
 import clock from './src/clock.jsx';
 import weather from './src/weather.jsx';
@@ -34,34 +36,48 @@ export const initialState = {
   weather: 'Loading...',
 };
 
-export const init = (dispatch) => {
-  // run at startup
-  clock.runner(dispatch)();
-  weather.runner(dispatch)();
-  cpuUsage.runner(dispatch)();
-  diskUsage.runner(dispatch)();
-  wifiSignal.runner(dispatch)();
-  nowPlaying.runner(dispatch)();
-  dayProgress.runner(dispatch)();
-  memoryUsage.runner(dispatch)();
-  volumeLevel.runner(dispatch)();
-  batteryLevel.runner(dispatch)();
-  brightnessLevel.runner(dispatch)();
+const safeRun = (fn) => {
+  try {
+    fn();
+  } catch (e) {
+    error(e);
+  }
+};
+const safeInterval = (fn, ms) => {
+  try {
+    return setInterval(fn, ms);
+  } catch (e) {
+    error(e);
+    return null;
+  }
+};
 
-  // run every refresh frequency
+export const init = (dispatch) => {
+  safeRun(clock.runner(dispatch));
+  safeRun(weather.runner(dispatch));
+  safeRun(cpuUsage.runner(dispatch));
+  safeRun(diskUsage.runner(dispatch));
+  safeRun(wifiSignal.runner(dispatch));
+  safeRun(nowPlaying.runner(dispatch));
+  safeRun(dayProgress.runner(dispatch));
+  safeRun(memoryUsage.runner(dispatch));
+  safeRun(volumeLevel.runner(dispatch));
+  safeRun(batteryLevel.runner(dispatch));
+  safeRun(brightnessLevel.runner(dispatch));
+
   const intervals = [
-    setInterval(clock.runner(dispatch), clock.refreshTimeout),
-    setInterval(weather.runner(dispatch), weather.refreshTimeout),
-    setInterval(cpuUsage.runner(dispatch), cpuUsage.refreshTimeout),
-    setInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout),
-    setInterval(wifiSignal.runner(dispatch), wifiSignal.refreshTimeout),
-    setInterval(nowPlaying.runner(dispatch), nowPlaying.refreshTimeout),
-    setInterval(dayProgress.runner(dispatch), dayProgress.refreshTimeout),
-    setInterval(memoryUsage.runner(dispatch), memoryUsage.refreshTimeout),
-    setInterval(volumeLevel.runner(dispatch), volumeLevel.refreshTimeout),
-    setInterval(batteryLevel.runner(dispatch), batteryLevel.refreshTimeout),
-    setInterval(brightnessLevel.runner(dispatch), brightnessLevel.refreshTimeout),
-  ];
+    safeInterval(clock.runner(dispatch), clock.refreshTimeout),
+    safeInterval(weather.runner(dispatch), weather.refreshTimeout),
+    safeInterval(cpuUsage.runner(dispatch), cpuUsage.refreshTimeout),
+    safeInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout),
+    safeInterval(wifiSignal.runner(dispatch), wifiSignal.refreshTimeout),
+    safeInterval(nowPlaying.runner(dispatch), nowPlaying.refreshTimeout),
+    safeInterval(dayProgress.runner(dispatch), dayProgress.refreshTimeout),
+    safeInterval(memoryUsage.runner(dispatch), memoryUsage.refreshTimeout),
+    safeInterval(volumeLevel.runner(dispatch), volumeLevel.refreshTimeout),
+    safeInterval(batteryLevel.runner(dispatch), batteryLevel.refreshTimeout),
+    safeInterval(brightnessLevel.runner(dispatch), brightnessLevel.refreshTimeout),
+  ].filter(Boolean);
 
   return intervals;
 };
