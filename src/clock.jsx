@@ -1,30 +1,28 @@
 // eslint-disable-next-line import/no-unresolved
-import { React, css } from 'uebersicht';
+import { React, run } from 'uebersicht';
+import dispatcher from './dispatcher';
+import config from '../lib/config.js';
 
-export const refreshFrequency = 1000;
+const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
+const type = 'SET_TIME';
 
-export const command = 'date "+%A_%d_%B_%l_%M_%p"';
+const getSuffix = (numDay) => {
+  if (numDay === 1 || numDay === 21 || numDay === 31) return 'st';
+  if (numDay === 2 || numDay === 22) return 'nd';
+  if (numDay === 3 || numDay === 23) return 'rd';
+  return 'th';
+};
 
-export const className = css`
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  box-sizing: border-box;
-  position: absolute;
-  width: 26rem;
-  height: 15rem;
-  top: 2rem;
-  left: calc(50% - 13.05rem);
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-`;
+const dateHandler = (dateString) =>
+  dateString.split('_').map((part, i) => {
+    const trimmed = part.trim();
+    if (i === 0) return trimmed.toUpperCase();
+    if (i === 5) return ` ${trimmed}`;
+    return trimmed;
+  });
 
 const parentBlockStyle = {
-  color: '#111111',
+  color: config.colors.foreground,
   fontFamily: 'Snell Roundhand',
   fontSize: '2rem',
   boxSizing: 'border-box',
@@ -32,14 +30,20 @@ const parentBlockStyle = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100%',
+
+  position: 'absolute',
+  width: '26rem',
+  height: '15rem',
+  top: '2rem',
+  left: 'calc(50% - 13.05rem)',
+  borderRadius: '1rem',
 };
 
 const hrStyle = {
   flexGrow: 1,
   height: '2px',
   border: 0,
-  backgroundColor: '#111111',
+  backgroundColor: config.colors.foreground,
 };
 
 const timeBlockStyle = {
@@ -64,22 +68,7 @@ const dayNameStyle = {
   paddingLeft: '0.3rem',
 };
 
-const getSuffix = (numDay) => {
-  if (numDay === 1 || numDay === 21 || numDay === 31) return 'st';
-  if (numDay === 2 || numDay === 22) return 'nd';
-  if (numDay === 3 || numDay === 23) return 'rd';
-  return 'th';
-};
-
-const dateHandler = (dateString) =>
-  dateString.split('_').map((part, i) => {
-    const trimmed = part.trim();
-    if (i === 0) return trimmed.toUpperCase();
-    if (i === 5) return ` ${trimmed}`;
-    return trimmed;
-  });
-
-export const render = ({ output }) => {
+function widget({ output }) {
   if (!output) return null;
   const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);
   const suffix = getSuffix(Number(day));
@@ -102,4 +91,13 @@ export const render = ({ output }) => {
       </div>
     </aside>
   );
+}
+
+export default {
+  refreshTimeout: config.refresh.clock,
+  type,
+  runner: (dispatch) => () => {
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
 };

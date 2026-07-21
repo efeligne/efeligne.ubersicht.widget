@@ -4,15 +4,24 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["plugin:react/recommended", "airbnb", "prettier"],
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "prettier"
+  ],
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": [
+    "react"
+  ],
   "rules": {
     "react/jsx-one-expression-per-line": "off",
+    "react/prop-types": "off",
+    "react/jsx-fragments": "off",
+    "react/destructuring-assignment": "off",
     "import/extensions": "off"
   }
 }
