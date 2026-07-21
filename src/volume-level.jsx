@@ -1,13 +1,24 @@
-import { ProgressBar } from './disk-usage.jsx';
+// eslint-disable-next-line import/no-unresolved
+import { React, run } from 'uebersicht';
+import dispatcher from './dispatcher';
+import ProgressBar from './progress-bar.jsx';
 
-export const className = `
-  top: 5rem;
-  right: 1rem;
-`;
+const topOffset = '5rem';
+const type = 'SET_VOLUME_LEVEL';
+const cmd = 'osascript -e "return output volume of (get volume settings)"';
 
-export const refreshFrequency = 5000;
-export const command = 'osascript -e "output volume of (get volume settings)"';
-export const render = ({ output }) => {
+function widget({ output }) {
   const vol = output ? Number(output.trim()) : NaN;
-  return ProgressBar('', Number.isNaN(vol) ? 'N/A' : vol);
+  const percentage = Number.isNaN(vol) ? 'N/A' : vol;
+
+  return <ProgressBar label="" percentage={percentage} top={topOffset} side="right" />;
+}
+
+export default {
+  refreshTimeout: 5000,
+  type,
+  runner: (dispatch) => () => {
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
 };

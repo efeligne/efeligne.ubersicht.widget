@@ -1,10 +1,21 @@
-import { ProgressBar } from './disk-usage.jsx';
+// eslint-disable-next-line import/no-unresolved
+import { React, run } from 'uebersicht';
+import dispatcher from './dispatcher';
+import ProgressBar from './progress-bar.jsx';
 
-export const className = `
-  top: 7.5rem;
-  right: 1rem;
-`;
+const topOffset = '7.5rem';
+const type = 'SET_BRIGHTNESS_LEVEL';
+const cmd = 'efeligne.ubersicht.widget/src/BrightnessCLI';
 
-export const refreshFrequency = 5000;
-export const command = `efeligne.ubersicht.widget/BrightnessCLI`;
-export const render = ({ output }) => ProgressBar('󰃟', Number(output.trim()));
+function widget({ output }) {
+  return <ProgressBar label="󰃟" percentage={Number(output.trim())} top={topOffset} side="right" />;
+}
+
+export default {
+  refreshTimeout: 5000,
+  type,
+  runner: (dispatch) => () => {
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
+};

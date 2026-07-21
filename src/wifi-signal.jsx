@@ -1,15 +1,25 @@
-import { ProgressBar } from './disk-usage.jsx';
+// eslint-disable-next-line import/no-unresolved
+import { React, run } from 'uebersicht';
+import dispatcher from './dispatcher';
+import ProgressBar from './progress-bar.jsx';
 
-export const refreshFrequency = 60000;
-export const command = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
+const topOffset = '10rem';
+const type = 'SET_WIFI_SIGNAL';
+const cmd = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
 
-export const className = `
-  top: 10rem;
-  right: 1rem;
-`;
-
-export const render = ({ output }) => {
+function widget({ output }) {
   const outputString = output ? String(output).trim() : '';
   const signal = parseInt(outputString, 10);
-  return ProgressBar('󰖩', Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100));
+  const percentage = Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100);
+
+  return <ProgressBar label="󰖩" percentage={percentage} top={topOffset} side="right" />;
+}
+
+export default {
+  refreshTimeout: 60000,
+  type,
+  runner: (dispatch) => () => {
+    run(cmd).then(dispatcher(type, dispatch));
+  },
+  widget: React.memo(widget),
 };

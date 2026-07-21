@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { React } from 'uebersicht';
 
-function ProgressBar({ label, percentage, top }) {
+function ProgressBar({ label, percentage, top, side = 'left' }) {
   const isValid = typeof percentage === 'number' && !Number.isNaN(percentage);
   const displayValue = isValid ? `${percentage}%` : percentage;
   const width = isValid ? percentage : 0;
@@ -11,7 +11,8 @@ function ProgressBar({ label, percentage, top }) {
     borderRadius: '1rem',
     position: 'absolute',
     top,
-    left: '1rem',
+    right: side === 'right' ? '1rem' : 'unset',
+    left: side === 'left' ? '1rem' : 'unset',
     width: '15rem',
     height: '3px',
   };

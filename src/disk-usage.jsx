@@ -3,7 +3,7 @@ import { React, run } from 'uebersicht';
 import dispatcher from './dispatcher';
 import ProgressBar from './progress-bar.jsx';
 
-const offset = '5rem';
+const topOffset = '5rem';
 const type = 'SET_DISK_USAGE';
 const cmd = 'df -k -t apfs';
 
@@ -13,7 +13,7 @@ function widget({ output }) {
   const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
 
   if (!outputLines || outputLines.length === 0) {
-    return <ProgressBar label={'\udb80\udeca'} percentage="N/A" top={offset} />;
+    return <ProgressBar label={'\udb80\udeca'} percentage="N/A" top={topOffset} />;
   }
 
   const size = outputLines[0] ?? '';
@@ -26,7 +26,7 @@ function widget({ output }) {
 
   const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
 
-  return <ProgressBar label={'\udb80\udeca'} percentage={used} top={offset} />;
+  return <ProgressBar label={'\udb80\udeca'} percentage={used} top={topOffset} />;
 }
 
 export default {

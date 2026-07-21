@@ -1,17 +1,23 @@
-import { ProgressBar } from './disk-usage.jsx';
+// eslint-disable-next-line import/no-unresolved
+import { React } from 'uebersicht';
+import ProgressBar from './progress-bar.jsx';
 
-export const refreshFrequency = 60000;
+const topOffset = '12.5rem';
+const type = 'SET_DAY_PROGRESS';
 
-export const className = `
-  top: 12.5rem;
-  right: 1rem;
-`;
+function widget({ output }) {
+  return <ProgressBar label="󱑸" percentage={output} top={topOffset} side="right" />;
+}
 
-export const render = () => {
-  const now = new Date();
-  const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
-  const totalMinutesInDay = 24 * 60;
-  const percentage = (minutesSinceMidnight / totalMinutesInDay) * 100;
-
-  return ProgressBar('󱑸', percentage.toFixed(1));
+export default {
+  refreshTimeout: 60000,
+  type,
+  runner: (dispatch) => () => {
+    const now = new Date();
+    const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+    const totalMinutesInDay = 24 * 60;
+    const percentage = (minutesSinceMidnight / totalMinutesInDay) * 100;
+    dispatch({ type, data: String(percentage.toFixed(1)) });
+  },
+  widget: React.memo(widget),
 };
