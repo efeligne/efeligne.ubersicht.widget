@@ -1,9 +1,9 @@
-// eslint-disable-next-line import/no-unresolved
 import { React } from 'uebersicht';
 import { error } from 'console';
 
 import css from './src/global-css';
 import clock from './src/clock.jsx';
+import theme from './src/theme.js';
 import weather from './src/weather.jsx';
 import nowPlaying from './src/now-playing.jsx';
 import diskUsage from './src/disk-usage.jsx';
@@ -23,17 +23,18 @@ export const refreshFrequency = false;
 export const className = css;
 
 export const initialState = {
-  cpu: '',
-  day: '',
-  disk: '',
-  time: '',
-  wifi: '',
-  memory: '',
-  volume: '',
-  battery: '',
-  playing: '',
-  brightness: '',
-  weather: 'Loading...',
+  [cpuUsage.stateKey]: '',
+  [dayProgress.stateKey]: '',
+  [diskUsage.stateKey]: '',
+  [clock.stateKey]: '',
+  [wifiSignal.stateKey]: '',
+  [theme.stateKey]: '',
+  [memoryUsage.stateKey]: '',
+  [volumeLevel.stateKey]: '',
+  [batteryLevel.stateKey]: '',
+  [nowPlaying.stateKey]: '',
+  [brightnessLevel.stateKey]: '',
+  [weather.stateKey]: 'Loading...',
 };
 
 const safeRun = (fn) => {
@@ -43,6 +44,7 @@ const safeRun = (fn) => {
     error(e);
   }
 };
+
 const safeInterval = (fn, ms) => {
   try {
     return setInterval(fn, ms);
@@ -54,6 +56,7 @@ const safeInterval = (fn, ms) => {
 
 export const init = (dispatch) => {
   safeRun(clock.runner(dispatch));
+  safeRun(theme.runner(dispatch));
   safeRun(weather.runner(dispatch));
   safeRun(cpuUsage.runner(dispatch));
   safeRun(diskUsage.runner(dispatch));
@@ -67,6 +70,7 @@ export const init = (dispatch) => {
 
   const intervals = [
     safeInterval(clock.runner(dispatch), clock.refreshTimeout),
+    safeInterval(theme.runner(dispatch), theme.refreshTimeout),
     safeInterval(weather.runner(dispatch), weather.refreshTimeout),
     safeInterval(cpuUsage.runner(dispatch), cpuUsage.refreshTimeout),
     safeInterval(diskUsage.runner(dispatch), diskUsage.refreshTimeout),
@@ -86,49 +90,43 @@ export const destroy = (intervals) => {
   intervals.forEach(clearInterval);
 };
 
+const reducers = new Map([
+  [weather.type, weather.reducer],
+  [cpuUsage.type, cpuUsage.reducer],
+  [diskUsage.type, diskUsage.reducer],
+  [wifiSignal.type, wifiSignal.reducer],
+  [nowPlaying.type, nowPlaying.reducer],
+  [dayProgress.type, dayProgress.reducer],
+  [memoryUsage.type, memoryUsage.reducer],
+  [volumeLevel.type, volumeLevel.reducer],
+  [batteryLevel.type, batteryLevel.reducer],
+  [brightnessLevel.type, brightnessLevel.reducer],
+  [theme.type, theme.reducer],
+  [clock.type, clock.reducer],
+]);
+
 export const updateState = (event, previousState) => {
-  switch (event.type) {
-    case clock.type:
-      return { ...previousState, time: event.data };
-    case weather.type:
-      return { ...previousState, weather: event.data };
-    case cpuUsage.type:
-      return { ...previousState, cpu: event.data };
-    case diskUsage.type:
-      return { ...previousState, disk: event.data };
-    case wifiSignal.type:
-      return { ...previousState, wifi: event.data };
-    case nowPlaying.type:
-      return { ...previousState, playing: event.data };
-    case dayProgress.type:
-      return { ...previousState, day: event.data };
-    case memoryUsage.type:
-      return { ...previousState, memory: event.data };
-    case volumeLevel.type:
-      return { ...previousState, volume: event.data };
-    case batteryLevel.type:
-      return { ...previousState, battery: event.data };
-    case brightnessLevel.type:
-      return { ...previousState, brightness: event.data };
-    default:
-      return previousState;
+  if (reducers.has(event.type)) {
+    return reducers.get(event.type)(event, previousState);
   }
+
+  return previousState;
 };
 
 function Widget(state) {
   return (
     <React.Fragment>
-      <clock.widget output={state.time} />
-      <weather.widget output={state.weather} />
-      <cpuUsage.widget output={state.cpu} />
-      <diskUsage.widget output={state.disk} />
-      <wifiSignal.widget output={state.wifi} />
-      <nowPlaying.widget output={state.playing} />
-      <dayProgress.widget output={state.day} />
-      <memoryUsage.widget output={state.memory} />
-      <volumeLevel.widget output={state.volume} />
-      <batteryLevel.widget output={state.battery} />
-      <brightnessLevel.widget output={state.brightness} />
+      <clock.widget output={state.time} theme={state.theme} />
+      <weather.widget output={state.weather} theme={state.theme} />
+      <cpuUsage.widget output={state.cpu} theme={state.theme} />
+      <diskUsage.widget output={state.disk} theme={state.theme} />
+      <wifiSignal.widget output={state.wifi} theme={state.theme} />
+      <nowPlaying.widget output={state.playing} theme={state.theme} />
+      <dayProgress.widget output={state.day} theme={state.theme} />
+      <memoryUsage.widget output={state.memory} theme={state.theme} />
+      <volumeLevel.widget output={state.volume} theme={state.theme} />
+      <batteryLevel.widget output={state.battery} theme={state.theme} />
+      <brightnessLevel.widget output={state.brightness} theme={state.theme} />
     </React.Fragment>
   );
 }

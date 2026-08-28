@@ -1,24 +1,28 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
+import createWidget from './widget-factory.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.battery;
-const type = 'SET_BATTERY_LEVEL';
-const cmd = 'pmset -g batt | grep -Eo "\\d+%" | cut -d% -f1';
+const { icons, refresh, positions } = config;
+const { top, side } = positions.battery;
 
-function widget({ output }) {
-  const val = output ? Number(output.trim()) : NaN;
-  const percentage = Number.isNaN(val) ? 'N/A' : Math.min(100, Math.max(0, val));
-  return <ProgressBar label={config.icons.battery} percentage={percentage} top={topOffset} />;
-}
-
-export default {
-  refreshTimeout: config.refresh.batteryLevel,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+export default createWidget({
+  cmd: 'pmset -g batt | grep -Eo "\\d+%" | cut -d% -f1',
+  refreshTimeout: refresh.batteryLevel,
+  type: 'SET_BATTERY_LEVEL',
+  stateKey: 'battery',
+  widget: ({ output, theme }) => {
+    const val = output ? Number(output.trim()) : NaN;
+    const percentage = Number.isNaN(val)
+      ? 'N/A'
+      : Math.min(100, Math.max(0, val));
+    return (
+      <ProgressBar
+        label={icons.battery}
+        percentage={percentage}
+        top={top}
+        side={side}
+        theme={theme}
+      />
+    );
   },
-  widget: React.memo(widget),
-};
+});

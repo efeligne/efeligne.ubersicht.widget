@@ -1,28 +1,22 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
+import createWidget from './widget-factory.jsx';
 import ProgressBar from './progress-bar.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.wifi;
-const type = 'SET_WIFI_SIGNAL';
-const cmd = `system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk '{print $4}'`;
+const { icons, refresh, positions } = config;
+const { top, side } = positions.wifi;
 
-function widget({ output }) {
-  const outputString = output ? String(output).trim() : '';
-  const signal = parseInt(outputString, 10);
-  const percentage = Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100);
+export default createWidget({
+  cmd: 'system_profiler SPAirPortDataType -detailLevel 0 | grep Signal | awk \'{print $4}\'',
+  refreshTimeout: refresh.wifiSignal,
+  type: 'SET_WIFI_SIGNAL',
+  stateKey: 'wifi',
+  widget: ({ output, theme }) => {
+    const outputString = output ? String(output).trim() : '';
+    const signal = parseInt(outputString, 10);
+    const percentage = Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100);
 
-  return (
-    <ProgressBar label={config.icons.wifi} percentage={percentage} top={topOffset} side="right" />
-  );
-}
-
-export default {
-  refreshTimeout: config.refresh.wifiSignal,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    return (
+      <ProgressBar label={icons.wifi} percentage={percentage} top={top} side={side} theme={theme} />
+    );
   },
-  widget: React.memo(widget),
-};
+});

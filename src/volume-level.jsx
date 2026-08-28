@@ -1,27 +1,27 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
+import createWidget from './widget-factory.jsx';
 import ProgressBar from './progress-bar.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.volume;
-const type = 'SET_VOLUME_LEVEL';
-const cmd = 'osascript -e "return output volume of (get volume settings)"';
+const { icons, refresh, positions } = config;
+const { top, side } = positions.volume;
 
-function widget({ output }) {
-  const vol = output ? Number(output.trim()) : NaN;
-  const percentage = Number.isNaN(vol) ? 'N/A' : vol;
+export default createWidget({
+  cmd: 'osascript -e "return output volume of (get volume settings)"',
+  refreshTimeout: refresh.volumeLevel,
+  type: 'SET_VOLUME_LEVEL',
+  stateKey: 'volume',
+  widget: ({ output, theme }) => {
+    const vol = output ? Number(output.trim()) : NaN;
+    const percentage = Number.isNaN(vol) ? 'N/A' : vol;
 
-  return (
-    <ProgressBar label={config.icons.volume} percentage={percentage} top={topOffset} side="right" />
-  );
-}
-
-export default {
-  refreshTimeout: config.refresh.volumeLevel,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    return (
+      <ProgressBar
+        label={icons.volume}
+        percentage={percentage}
+        top={top}
+        side={side}
+        theme={theme}
+      />
+    );
   },
-  widget: React.memo(widget),
-};
+});

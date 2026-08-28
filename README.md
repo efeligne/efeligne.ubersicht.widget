@@ -66,7 +66,7 @@ decoupling data fetching from rendering.
 
 Edit `lib/config.js` to customize the widget without touching source code:
 
-- **`colors`** — `foreground` (text/bar color) and `track` (progress background)
+- **`colors`** — `fg/fgDark` (text/bar color) and `track` (progress background)
 - **`icons`** — Nerd Font icons for each widget and weather condition
 - **`refresh`** — update intervals per widget (in milliseconds)
 - **`weather.location`** — city for weather (format: `City,Country`)

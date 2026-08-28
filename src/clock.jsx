@@ -1,10 +1,7 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
+import createWidget from './widget-factory.jsx';
 import config from '../lib/config.js';
 
-const cmd = 'date "+%A_%d_%B_%l_%M_%p"';
-const type = 'SET_TIME';
+const { refresh } = config;
 
 const getSuffix = (numDay) => {
   if (numDay === 1 || numDay === 21 || numDay === 31) return 'st';
@@ -21,83 +18,34 @@ const dateHandler = (dateString) =>
     return trimmed;
   });
 
-const parentBlockStyle = {
-  color: config.colors.foreground,
-  fontFamily: 'Snell Roundhand',
-  fontSize: '2rem',
-  boxSizing: 'border-box',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
+export default createWidget({
+  cmd: 'date "+%A_%d_%B_%l_%M_%p"',
+  refreshTimeout: refresh.clock,
+  type: 'SET_TIME',
+  stateKey: 'time',
+  widget: ({ output, theme }) => {
+    if (!output) return null;
 
-  position: 'absolute',
-  width: '26rem',
-  height: '15rem',
-  top: '2rem',
-  left: 'calc(50% - 13.05rem)',
-  borderRadius: '1rem',
-};
+    const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);
+    const suffix = getSuffix(Number(day));
 
-const hrStyle = {
-  flexGrow: 1,
-  height: '2px',
-  border: 0,
-  backgroundColor: config.colors.foreground,
-};
-
-const timeBlockStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '80%',
-  gap: '1rem',
-  marginTop: '0.5rem',
-  fontFamily: 'Courier New',
-};
-
-const colonStyle = {
-  fontFamily: 'Courier New',
-  animation: 'blink 1s linear infinite',
-};
-
-const dayNameStyle = {
-  letterSpacing: '0.25rem',
-  fontSize: '4rem',
-  fontFamily: 'New York',
-  paddingLeft: '0.3rem',
-};
-
-function widget({ output }) {
-  if (!output) return null;
-  const [dayName, day, month, hours, minutes, dayHalf] = dateHandler(output);
-  const suffix = getSuffix(Number(day));
-
-  return (
-    <aside style={parentBlockStyle}>
-      <span>
-        The {day} <sup>{suffix}</sup> of {month}
-      </span>
-      <span style={dayNameStyle}>{dayName}</span>
-      <div style={timeBlockStyle}>
-        <hr style={hrStyle} />
-        <div>
-          <span>{hours}</span>
-          <span style={colonStyle}>:</span>
-          <span>{minutes}</span>
-          <span>{dayHalf}</span>
+    return (
+      <aside className={`clock ${theme}`}>
+        <span>
+          The {day} <sup>{suffix}</sup> of {month}
+        </span>
+        <span className="dayName">{dayName}</span>
+        <div className="timeBlock">
+          <hr />
+          <div>
+            <span>{hours}</span>
+            <span className="colon">:</span>
+            <span>{minutes}</span>
+            <span>{dayHalf}</span>
+          </div>
+          <hr />
         </div>
-        <hr style={hrStyle} />
-      </div>
-    </aside>
-  );
-}
-
-export default {
-  refreshTimeout: config.refresh.clock,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+      </aside>
+    );
   },
-  widget: React.memo(widget),
-};
+});

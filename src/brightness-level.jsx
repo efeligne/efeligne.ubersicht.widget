@@ -1,32 +1,27 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
+import createWidget from './widget-factory.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.brightness;
-const type = 'SET_BRIGHTNESS_LEVEL';
-const cmd = 'efeligne.ubersicht.widget/exec/BrightnessCLI';
+const { icons, refresh, positions } = config;
+const { top, side } = positions.brightness;
 
-function widget({ output }) {
-  const trimmed = output?.trim();
-  const percentage = trimmed ? Number(trimmed) : NaN;
+export default createWidget({
+  cmd: 'efeligne.ubersicht.widget/exec/BrightnessCLI',
+  refreshTimeout: refresh.brightnessLevel,
+  type: 'SET_BRIGHTNESS_LEVEL',
+  stateKey: 'brightness',
+  widget: ({ output, theme }) => {
+    const trimmed = output?.trim();
+    const percentage = trimmed ? Number(trimmed) : NaN;
 
-  return (
-    <ProgressBar
-      label={config.icons.brightness}
-      percentage={Number.isNaN(percentage) ? 'N/A' : percentage}
-      top={topOffset}
-      side="right"
-    />
-  );
-}
-
-export default {
-  refreshTimeout: config.refresh.brightnessLevel,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    return (
+      <ProgressBar
+        label={icons.brightness}
+        percentage={Number.isNaN(percentage) ? 'N/A' : percentage}
+        top={top}
+        side={side}
+        theme={theme}
+      />
+    );
   },
-  widget: React.memo(widget),
-};
+});

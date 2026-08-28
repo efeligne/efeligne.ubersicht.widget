@@ -1,40 +1,34 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
 import ProgressBar from './progress-bar.jsx';
+import createWidget from './widget-factory.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.disk;
-const type = 'SET_DISK_USAGE';
-const cmd = 'df -k -t apfs';
+const { refresh, positions, icons } = config;
+const { top, side } = positions.disk;
 
 const toGB = (kb) => Math.round(kb / 1024 ** 2);
 
-function widget({ output }) {
-  const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
+export default createWidget({
+  cmd: 'df -k -t apfs',
+  refreshTimeout: refresh.brightnessLevel,
+  type: 'SET_DISK_USAGE',
+  stateKey: 'disk',
+  widget: ({ output, theme }) => {
+    const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
 
-  if (!outputLines || outputLines.length === 0) {
-    return <ProgressBar label={config.icons.disk} percentage="N/A" top={topOffset} />;
-  }
+    if (!outputLines || outputLines.length === 0) {
+      return <ProgressBar label={config.icons.disk} percentage="N/A" top={top} side={side} />;
+    }
 
-  const size = outputLines[0] ?? '';
-  const sizeGB = toGB(+size.split(' ').filter(Boolean)[1]);
+    const size = outputLines[0] ?? '';
+    const sizeGB = toGB(+size.split(' ').filter(Boolean)[1]);
 
-  const totalUsed = outputLines.reduce((accumulator, current) => {
-    const [, , used] = current.split(' ').filter(Boolean);
-    return accumulator + +used;
-  }, 0);
+    const totalUsed = outputLines.reduce((accumulator, current) => {
+      const [, , used] = current.split(' ').filter(Boolean);
+      return accumulator + +used;
+    }, 0);
 
-  const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
+    const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
 
-  return <ProgressBar label={config.icons.disk} percentage={used} top={topOffset} />;
-}
-
-export default {
-  refreshTimeout: config.refresh.diskUsage,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    return <ProgressBar label={icons.disk} percentage={used} top={top} theme={theme} side={side} />;
   },
-  widget: React.memo(widget),
-};
+});

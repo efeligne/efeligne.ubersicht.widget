@@ -1,47 +1,34 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
+import { run } from 'uebersicht';
 import dispatcher from './dispatcher';
 import config from '../lib/config.js';
+import createWidget from './widget-factory.jsx';
 
-const scriptPath = 'efeligne.ubersicht.widget/exec/now-playing.sh';
 const type = 'SET_NOW_PLAYING';
+const scriptPath = 'efeligne.ubersicht.widget/exec/now-playing.sh';
 
-const parentBlockStyle = {
-  position: 'absolute',
-  bottom: '1rem',
-  left: '1rem',
-  color: config.colors.foreground,
-  fontFamily: "'JetBrainsMono Nerd Font', 'Courier New', monospace",
-  fontSize: '1rem',
-  letterSpacing: '0.08rem',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  maxWidth: '45vw',
-  opacity: 1,
-  transition: 'opacity 0.4s ease',
-};
-
-function widget({ output }) {
-  const track = output ? output.trim() : '';
-  if (!track) return null;
-  return (
-    <span style={parentBlockStyle}>
-      <span className="bars">
-        <span className="bar" style={{ animationDelay: '0s' }} />
-        <span className="bar" style={{ animationDelay: '0.1s' }} />
-        <span className="bar" style={{ animationDelay: '0.2s' }} />
-        <span className="bar" style={{ animationDelay: '0.3s' }} />
-        <span className="bar" style={{ animationDelay: '0.4s' }} />
-      </span>
-      {track}
-    </span>
-  );
-}
-
-export default {
+export default createWidget({
   refreshTimeout: config.refresh.nowPlaying,
   type,
+  stateKey: 'playing',
+  widget: ({ output, theme }) => {
+    const track = output ? output.trim() : '';
+    if (!track) return null;
+
+    return (
+      <span className={`nowPlaying ${theme}`}>
+        <ul>
+          <li style={{ animationDelay: '0s' }} />
+          <li style={{ animationDelay: '0.1s' }} />
+          <li style={{ animationDelay: '0.2s' }} />
+          <li style={{ animationDelay: '0.3s' }} />
+          <li style={{ animationDelay: '0.4s' }} />
+          <li style={{ animationDelay: '0.5s' }} />
+        </ul>
+        {track}
+      </span>
+    );
+  },
+
   runner: (dispatch) => () => {
     const cmd = [
       `ICON_SPOTIFY='${config.icons.players.spotify} '`,
@@ -53,5 +40,4 @@ export default {
     ].join(' ');
     run(cmd).then(dispatcher(type, dispatch));
   },
-  widget: React.memo(widget),
-};
+});

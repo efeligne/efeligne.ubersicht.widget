@@ -1,25 +1,27 @@
-// eslint-disable-next-line import/no-unresolved
-import { React, run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
+import createWidget from './widget-factory.jsx';
 import ProgressBar from './progress-bar.jsx';
+import config from '../lib/config.js';
 
-const topOffset = config.positions.memory;
-const type = 'SET_MEMORY_USAGE';
-const cmd = 'memory_pressure | grep System-wide | grep -Eo "\\d+%" | cut -d% -f1';
+const { icons, refresh, positions } = config;
+const { top, side } = positions.memory;
 
-function widget({ output }) {
-  const val = output ? Number(output.trim()) : NaN;
-  const percentage = Number.isNaN(val) ? 'N/A' : 100 - val;
+export default createWidget({
+  cmd: 'memory_pressure | grep System-wide | grep -Eo "\\d+%" | cut -d% -f1',
+  refreshTimeout: refresh.memoryUsage,
+  type: 'SET_MEMORY_USAGE',
+  stateKey: 'memory',
+  widget: ({ output, theme }) => {
+    const val = output ? Number(output.trim()) : NaN;
+    const percentage = Number.isNaN(val) ? 'N/A' : 100 - val;
 
-  return <ProgressBar label={config.icons.memory} percentage={percentage} top={topOffset} />;
-}
-
-export default {
-  refreshTimeout: config.refresh.memoryUsage,
-  type,
-  runner: (dispatch) => () => {
-    run(cmd).then(dispatcher(type, dispatch));
+    return (
+      <ProgressBar
+        label={icons.memory}
+        percentage={percentage}
+        top={top}
+        side={side}
+        theme={theme}
+      />
+    );
   },
-  widget: React.memo(widget),
-};
+});
