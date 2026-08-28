@@ -29,7 +29,7 @@ export default createWidget({
     );
   },
 
-  runner: (dispatch) => () => {
+  runner: (dispatch) => {
     const cmd = [
       `ICON_SPOTIFY='${config.icons.players.spotify} '`,
       `ICON_MUSIC='${config.icons.players.music} '`,
