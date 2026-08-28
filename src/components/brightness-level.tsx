@@ -1,6 +1,6 @@
-import ProgressBar from './progress-bar.jsx';
-import createWidget from './widget-factory.jsx';
-import config from '../lib/config.js';
+import { ProgressBarMemo } from './progress-bar';
+import { createWidget } from '../helpers/widget-factory';
+import { config } from '../../lib/config';
 
 const { icons, refresh, positions } = config;
 const { top, side } = positions.brightness;
@@ -15,7 +15,7 @@ export default createWidget({
     const percentage = trimmed ? Number(trimmed) : NaN;
 
     return (
-      <ProgressBar
+      <ProgressBarMemo
         label={icons.brightness}
         percentage={Number.isNaN(percentage) ? 'N/A' : percentage}
         top={top}

@@ -1,5 +1,5 @@
 import { css } from 'uebersicht';
-import config from '../lib/config.js';
+import { config } from '../../lib/config';
 
 export default css`
   @keyframes blink {

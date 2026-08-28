@@ -1,11 +1,10 @@
-import ProgressBar from './progress-bar.jsx';
-import createWidget from './widget-factory.jsx';
-import config from '../lib/config.js';
+import { ProgressBarMemo } from './progress-bar';
+import { createWidget } from '../helpers/widget-factory';
+import { toGB } from '../helpers/to-gb';
+import { config } from '../../lib/config';
 
 const { refresh, positions, icons } = config;
 const { top, side } = positions.disk;
-
-const toGB = (kb) => Math.round(kb / 1024 ** 2);
 
 export default createWidget({
   cmd: 'df -k -t apfs',
@@ -16,7 +15,7 @@ export default createWidget({
     const outputLines = output?.split(/\r?\n/).slice(1).filter(Boolean);
 
     if (!outputLines || outputLines.length === 0) {
-      return <ProgressBar label={config.icons.disk} percentage="N/A" top={top} side={side} />;
+      return <ProgressBarMemo label={config.icons.disk} percentage="N/A" top={top} side={side} />;
     }
 
     const size = outputLines[0] ?? '';
@@ -29,6 +28,6 @@ export default createWidget({
 
     const used = Math.round((toGB(totalUsed) * 100) / sizeGB);
 
-    return <ProgressBar label={icons.disk} percentage={used} top={top} theme={theme} side={side} />;
+    return <ProgressBarMemo label={icons.disk} percentage={used} top={top} theme={theme} side={side} />;
   },
 });

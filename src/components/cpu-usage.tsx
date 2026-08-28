@@ -1,6 +1,6 @@
-import createWidget from './widget-factory.jsx';
-import ProgressBar from './progress-bar.jsx';
-import config from '../lib/config.js';
+import { ProgressBarMemo } from './progress-bar';
+import { createWidget } from '../helpers/widget-factory';
+import { config } from '../../lib/config';
 
 const { refresh, positions, icons } = config;
 const { top, side } = positions.cpu;
@@ -15,7 +15,7 @@ export default createWidget({
     const percentage = Number.isNaN(val) ? 'N/A' : Math.round(val);
 
     return (
-      <ProgressBar label={icons.cpu} percentage={percentage} side={side} top={top} theme={theme} />
+      <ProgressBarMemo label={icons.cpu} percentage={percentage} side={side} top={top} theme={theme} />
     );
   },
 });

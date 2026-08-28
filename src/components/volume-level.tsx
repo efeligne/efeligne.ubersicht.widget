@@ -1,6 +1,6 @@
-import createWidget from './widget-factory.jsx';
-import ProgressBar from './progress-bar.jsx';
-import config from '../lib/config.js';
+import { ProgressBarMemo } from './progress-bar';
+import { createWidget } from '../helpers/widget-factory';
+import { config } from '../../lib/config';
 
 const { icons, refresh, positions } = config;
 const { top, side } = positions.volume;
@@ -15,7 +15,7 @@ export default createWidget({
     const percentage = Number.isNaN(vol) ? 'N/A' : vol;
 
     return (
-      <ProgressBar
+      <ProgressBarMemo
         label={icons.volume}
         percentage={percentage}
         top={top}

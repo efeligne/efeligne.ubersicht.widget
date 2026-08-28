@@ -1,7 +1,16 @@
 import { React } from 'uebersicht';
-import config from '../lib/config';
+import { config } from '../../lib/config';
 
-function ProgressBar({ label, percentage, top, side = 'left', theme = 'light' }) {
+interface ProgressBarProps {
+  label: string;
+  percentage: number | string;
+  top: number | string;
+  side?: string;
+  theme?: string;
+}
+
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ label, percentage, top, side = 'left', theme = 'light' }) => {
   const isValid = typeof percentage === 'number' && !Number.isNaN(percentage);
   const displayValue = isValid ? `${percentage}%` : percentage;
   const progressBar = `progressBar ${theme} ${side}`;
@@ -20,6 +29,6 @@ function ProgressBar({ label, percentage, top, side = 'left', theme = 'light' })
       </div>
     </aside>
   );
-}
+};
 
-export default React.memo(ProgressBar);
+export const ProgressBarMemo = React.memo(ProgressBar);

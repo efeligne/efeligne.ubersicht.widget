@@ -1,7 +1,7 @@
 import { run } from 'uebersicht';
-import dispatcher from './dispatcher';
-import config from '../lib/config.js';
-import createWidget from './widget-factory.jsx';
+import { createWidget } from '../helpers/widget-factory';
+import { dispatcher } from '../helpers/dispatcher';
+import { config } from '../../lib/config';
 
 const type = 'SET_NOW_PLAYING';
 const scriptPath = 'efeligne.ubersicht.widget/exec/now-playing.sh';

@@ -1,6 +1,6 @@
-import createWidget from './widget-factory.jsx';
-import ProgressBar from './progress-bar.jsx';
-import config from '../lib/config.js';
+import { ProgressBarMemo } from './progress-bar';
+import { createWidget } from '../helpers/widget-factory';
+import { config } from '../../lib/config';
 
 const { icons, refresh, positions } = config;
 const { top, side } = positions.wifi;
@@ -13,10 +13,18 @@ export default createWidget({
   widget: ({ output, theme }) => {
     const outputString = output ? String(output).trim() : '';
     const signal = parseInt(outputString, 10);
-    const percentage = Number.isNaN(signal) ? 'N/A' : Math.min((signal + 100) * 2, 100);
+    const percentage = !Number.isNaN(signal)
+      ? Math.min((signal + 100) * 2, 100)
+      : 'N/A';
 
     return (
-      <ProgressBar label={icons.wifi} percentage={percentage} top={top} side={side} theme={theme} />
+      <ProgressBarMemo
+        label={icons.wifi}
+        percentage={percentage}
+        top={top}
+        side={side}
+        theme={theme}
+      />
     );
   },
 });
