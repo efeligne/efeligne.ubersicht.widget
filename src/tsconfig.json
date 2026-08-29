@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "strict": true,
@@ -16,9 +12,11 @@
     "isolatedModules": false,
     "allowJs": true,
     "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/lib/*": ["../lib/*"]
+    }
   },
-  "include": [
-    "**/*",
-    "../lib/**/*",
-  ]
+  "include": ["**/*", "../lib/**/*"]
 }

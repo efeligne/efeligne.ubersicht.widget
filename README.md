@@ -1,135 +1,239 @@
-# Übersicht Widget
+# efeligne.ubersicht.widget
 
 A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht).
 
-<img width="1680" height="1050" alt="Screenshot 2026-07-21 at 07 59 19" src="https://github.com/user-attachments/assets/c22bcd12-a283-4d0a-b4d9-69b4a54b7bd2" />
+![Desktop Screenshot](https://github.com/user-attachments/assets/c22bcd12-a283-4d0a-b4d9-69b4a54b7bd2)
+
+## Installation
+
+### Prerequisites
+
+- [Übersicht](https://github.com/felixhageloh/uebersicht) — install from official website
+- [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts) — required for widget icons
+
+### Setup
+
+1. **Clone or copy** the widget to your Übersicht widgets directory:
+
+   ```bash
+   cp -r efeligne.ubersicht.widget ~/Library/'Application Support'/Übersicht/widgets/
+   ```
+
+2. **Navigate to the source directory** and install dependencies:
+
+   ```bash
+   cd ~/Library/'Application Support'/Übersicht/widgets/efeligne.ubersicht.widget/src
+   npm install
+   ```
+
+3. **Build** the widget:
+
+   ```bash
+   npm run build
+   ```
+
+4. **Refresh Übersicht** — the widget should appear in the sidebar, click to activate
 
 ## Widgets
 
-| Widget | Description | Side | Refreshes |
+| Widget | Description | Position | Refresh |
 | --- | --- | --- | --- |
-| **Clock** | Day, date, and time | Center | 1s |
-| **Weather** | Current condition and temperature | Top-right | 10min |
-| **Now Playing** | Currently playing track | Bottom-left | 5s |
-| **Disk Usage** | APFS storage usage | Left | 2min |
-| **Memory Usage** | Memory pressure | Left | 5s |
-| **CPU Usage** | CPU load | Left | 5s |
-| **Battery Level** | Battery charge | Left | 1min |
-| **Brightness Level** | Display brightness | Right | 5s |
-| **Day Progress** | Percent of day elapsed | Right | 1min |
-| **Volume Level** | System output volume | Right | 5s |
-| **Wi-Fi Signal** | Signal strength | Right | 1min |
+| **Clock** | Current time with date | Center | 1s |
+| **Weather** | Temperature and conditions | Bottom-right | 10min |
+| **Now Playing** | Current track with animated equalizer | Bottom-left | 5s |
+| **Disk Usage** | APFS storage usage | Left side | 2min |
+| **Memory Usage** | Available memory | Left side | 5s |
+| **CPU Usage** | Processor load | Left side | 5s |
+| **Battery Level** | Charge percentage | Left side | 1min |
+| **Brightness Level** | Display brightness | Right side | 5s |
+| **Day Progress** | Day elapsed | Right side | 1min |
+| **Volume Level** | Output volume | Right side | 5s |
+| **Wi-Fi Signal** | Network strength | Right side | 1min |
 
 ## Project Structure
 
-```text
+```
 efeligne.ubersicht.widget/
 ├── widget.jsx              # Compiled output (do not edit)
 ├── lib/
 │   └── config.js           # User-configurable settings
 ├── exec/
-│   ├── BrightnessCLI       # Binary for brightness detection
-│   └── now-playing.sh      # Shell script for music detection
+│   ├── BrightnessCLI       # Brightness detection binary
+│   └── now-playing.sh      # Music players detection script
 └── src/
     ├── widget.tsx          # Main entry point
+    ├── build.js            # Build script
     ├── tsconfig.json       # TypeScript configuration
-    ├── eslint.config.js    # ESLint configuration
-    ├── uebersicht.d.ts     # TypeScript declarations for uebersicht
-    ├── package.json        # Dependencies and scripts
-    ├── helpers/
-    │   ├── widget-factory.tsx  # Factory for creating widgets
-    │   ├── dispatcher.ts      # Redux-like dispatch utility
-    │   ├── theme.ts            # macOS theme detection
-    │   ├── global-css.ts       # Global styles
-    │   ├── date-helpers.ts     # Date formatting
-    │   └── weather-helpers.ts  # Weather icon mapping
-    └── components/
-        ├── progress-bar.tsx    # Reusable progress bar
-        ├── clock.tsx
-        ├── weather.tsx
-        ├── now-playing.tsx
-        ├── disk-usage.tsx
-        ├── memory-usage.tsx
-        ├── cpu-usage.tsx
-        ├── battery-level.tsx
-        ├── brightness-level.tsx
-        ├── day-progress.tsx
-        ├── volume-level.tsx
-        └── wifi-signal.tsx
+    ├── biome.json          # Biome linter configuration
+    ├── package.json         # Dependencies and scripts
+    ├── uebersicht.d.ts     # TypeScript declarations for Übersicht
+    ├── helpers/            # Shared utilities
+    │   ├── const.ts        # Constants (MAX_PERCENTAGE, etc.)
+    │   ├── dispatcher.ts   # Redux-like dispatch utilities
+    │   ├── getPercentage.ts # Parse percentage from command output
+    │   ├── init.ts         # Widget initialization
+    │   ├── state.ts        # State management
+    │   ├── styles.ts       # Global CSS styles
+    │   └── toGb.ts         # KB to GB conversion
+    └── widgets/            # Widget implementations
+        ├── index.ts         # Widget registry
+        ├── Factory/         # Widget factory pattern
+        │   ├── create.tsx   # Factory function
+        │   ├── helpers.ts   # Factory utilities
+        │   └── types.ts     # TypeScript interfaces
+        ├── BatteryLevel/
+        ├── BrightnessLevel/
+        ├── Clock/           # DateLine, TimeLine, helpers, types
+        ├── CpuUsage/
+        ├── DayProgress/
+        ├── DiskUsage/
+        ├── MemoryUsage/
+        ├── NowPlaying/
+        ├── ProgressBar/     # Shared progress bar component
+        ├── Theme/           # Dark/light mode detection
+        ├── VolumeLevel/
+        ├── Weather/
+        └── WifiSignal/
 ```
 
 ## Architecture
 
-`widget.tsx` is the main Übersicht entry point using `init`/`updateState`/`render` lifecycle with a centralized dispatcher pattern:
+The widget uses a centralized architecture with widget registry:
 
-- **`init(dispatch)`** — starts all widget runners and sets up refresh intervals
-- **`updateState(event, state)`** — Redux-like reducer that updates state by event type
-- **`render(state)`** — composes all widget React components
+```
+┌─────────────────────────────────────────────────────┐
+│                      widget.tsx                     │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ init.ts — runs all runners, sets intervals  │   │
+│  │ state.ts — centralized state + reducers     │   │
+│  │ dispatcher.ts — safe dispatch utilities     │   │
+│  └─────────────────────────────────────────────┘   │
+│                         │                           │
+│                         ▼                           │
+│  ┌─────────────────────────────────────────────┐   │
+│  │           widgets/index.ts                    │   │
+│  │     [widget1, widget2, widget3, ...]        │   │
+│  └─────────────────────────────────────────────┘   │
+│                         │                           │
+│         ┌───────────────┼───────────────┐         │
+│         ▼               ▼               ▼         │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
+│  │  Battery   │  │   Clock    │  │   Weather  │  │
+│  │  Widget    │  │   Widget   │  │   Widget   │  │
+│  └────────────┘  └────────────┘  └────────────┘  │
+└─────────────────────────────────────────────────────┘
+```
 
-Each widget module exports an object created via `createWidget`:
+### Widget Interface
+
+Each widget exports an object created via the `create` factory:
 
 ```typescript
 {
-  refreshTimeout,  // interval in ms
-  type,            // event type for the reducer
-  stateKey,        // key in global state
-  runner,          // optional custom data fetcher (or uses cmd)
-  reducer,         // (auto-generated by factory)
-  widget           // optional React component
+  refreshTimeout,  // Update interval in milliseconds
+  type,            // Event type for the dispatcher
+  stateKey,        // Key in global state object
+  runner,          // Optional custom data fetcher
+  reducer,         // Auto-generated by factory
+  widget           // React component
 }
 ```
 
+### Custom Runners
+
+Some widgets use custom runners for special behavior:
+
+- **Weather** — caches last successful result for offline use
+- **DayProgress** — calculates progress via JavaScript (no shell command)
+- **Theme** — uses custom command for macOS appearance detection
+
 ## Configuration
 
-Edit `lib/config.js` to customize the widget without touching source code:
+Edit `lib/config.js` to customize the widget:
 
-- **`colors`** — `fg/fgDark` (text/bar color) and `track` (progress background)
-- **`icons`** — Nerd Font icons for each widget and weather condition
-- **`positions`** — widget positions (`top`, `side`) for left/center/right alignment
-- **`refresh`** — update intervals per widget (in milliseconds)
-- **`weather.location`** — city for weather (format: `City,Country`)
-
-Example:
-
-```js
-colors: {
-  foreground: '#111111',  // dark for light wallpaper
-  track: '#777777',       // progress bar background
-}
+```javascript
+export const config = {
+  colors: {
+    fg: '#111111',       // Text color (light mode)
+    fgDark: '#BBD2E7',   // Text color (dark mode)
+    track: '#777777',     // Progress bar background
+    trackDark: '#777777',
+  },
+  icons: {
+    // Nerd Font icon codes for each widget
+    battery: '\uF240',
+    brightness: '\uF042',
+    cpu: '\uF2DB',
+    // ... more icons
+    players: {
+      spotify: '\uF1BC',
+      music: '\uF001',
+      vlc: '\uF008',
+      swinsian: '\uF025',
+      vox: '\uF025',
+    },
+  },
+  refresh: {
+    clock: 1000,          // 1 second
+    weather: 600000,      // 10 minutes
+    nowPlaying: 5000,
+    // ... more intervals (in ms)
+  },
+  positions: {
+    disk: { top: '5rem', side: 'left' },
+    volume: { top: '5rem', side: 'right' },
+    memory: { top: '7.5rem', side: 'left' },
+    // ... widget positions
+  },
+  weather: {
+    location: 'Saint_Petersburg,Russia',  // wttr.in format
+  },
+};
 ```
 
 ## Usage Notes
 
-- **Weather** — uses [wttr.in](https://wttr.in). Requires an internet connection.
-Shows `N/A` when unavailable. Caches last successful result for offline use.
-- **Now Playing** — supports Spotify, Apple Music, VLC, Swinsian, and VOX.
-Only one active player is detected at a time.
-- **Volume** — detected only for devices that support software volume control.
-External monitors without audio control show `N/A`.
-- **Brightness** — detected only for the main built-in display.
-External monitors are not supported.
-- **Disk** — tracks only APFS-formatted volumes. Other filesystems
-(HFS+, exFAT, etc.) are not included.
-- **Widgets may show `N/A`** when the underlying command fails to retrieve data
-(e.g., no battery on a desktop Mac, no Wi‑Fi hardware, unsupported audio device).
+- **Weather** — queries [wttr.in](https://wttr.in). Requires internet.
+  Shows cached data when offline, `N/A` when unavailable.
 
-## Fonts
+- **Now Playing** — supports Spotify, Apple Music, VLC, Swinsian, VOX.
+  Only one active player is detected at a time.
 
-- Snell Roundhand
-- Courier New
-- New York
-- JetBrainsMono Nerd Font (required for icons; will not render without it)
+- **Volume** — requires software volume control. External monitors
+  without audio support show `N/A`.
+
+- **Brightness** — detects only built-in display brightness.
+  External monitors are not supported.
+
+- **Disk** — tracks only APFS volumes. Other filesystems (HFS+,
+  exFAT, etc.) are ignored.
+
+- Widgets may display `N/A` when underlying commands fail
+  (no battery on desktop Mac, unsupported audio device, etc.).
 
 ## Development
 
-TypeScript source lives in `src/` and must be built to `widget.jsx`:
+Source TypeScript is in `src/` and must be built to `widget.jsx`:
 
-```sh
+```bash
 cd src
-npm run dev        # Build and watch for changes
-npm run build      # Production build
-npm run lint       # Run ESLint
-npm run lint:fix   # Auto-fix linting issues
+npm install          # Install dependencies
+npm run build        # Production build
+npm run check        # Lint + format + fix (Biome)
+npm run format       # Format only (Biome)
 ```
 
 After building, refresh Übersicht to reload the widget.
+
+## Fonts
+
+Required fonts (install via Homebrew or download):
+
+```bash
+brew install font-jetbrains-nerd-font font-snell-roundhand font-new-york
+```
+
+- **JetBrainsMono Nerd Font** — widget icons
+- **Snell Roundhand** — clock display
+- **New York** — day name
+- **Courier New** — time digits
