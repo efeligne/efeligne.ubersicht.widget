@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ICON_SPOTIFY="${ICON_SPOTIFY:- }"
-ICON_MUSIC="${ICON_MUSIC:- }"
-ICON_VLC="${ICON_VLC:-󰕼 }"
-ICON_SWINSIAN="${ICON_SWINSIAN:-󰥛 }"
-ICON_VOX="${ICON_VOX:- }"
+ICON_SPOTIFY="${ICON_SPOTIFY:- } "
+ICON_MUSIC="${ICON_MUSIC:- } "
+ICON_VLC="${ICON_VLC:-󰕼 } "
+ICON_SWINSIAN="${ICON_SWINSIAN:-󰥛 } "
+ICON_VOX="${ICON_VOX:- } "
 
 # Spotify
 RESULT=$(osascript -e "
