@@ -1,242 +1,171 @@
 # efeligne.ubersicht.widget
 
-A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht).
-
-<img width="1680" height="1050" alt="Screenshot 2026-08-28 at 14 46 46" src="https://github.com/user-attachments/assets/4eeab486-5231-411e-8bab-3bd08dd84ffa" />
-
-<img width="1680" height="1050" alt="Screenshot 2026-08-28 at 14 45 51" src="https://github.com/user-attachments/assets/c2ec9408-28e6-4b81-bee7-dfda5683160a" />
-
-
-## Installation
-
-### Prerequisites
-
-- [Übersicht](https://github.com/felixhageloh/uebersicht) — install from official website
-- [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts) — required for widget icons
-
-### Setup
-
-1. **Clone or copy** the widget to your Übersicht widgets directory:
-
-   ```bash
-   cp -r efeligne.ubersicht.widget ~/Library/'Application Support'/Übersicht/widgets/
-   ```
-
-2. **Navigate to the source directory** and install dependencies:
-
-   ```bash
-   cd ~/Library/'Application Support'/Übersicht/widgets/efeligne.ubersicht.widget/src
-   npm install
-   ```
-
-3. **Build** the widget:
-
-   ```bash
-   npm run build
-   ```
-
-4. **Refresh Übersicht** — the widget should appear in the sidebar, click to activate
+A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht): clock, weather, now playing, system monitors — with automatic dark/light theming and Dock-aware positioning.
 
 ## Widgets
 
 | Widget | Description | Position | Refresh |
 | --- | --- | --- | --- |
-| **Clock** | Current time with date | Center | 1s |
-| **Weather** | Temperature and conditions | Bottom-right | 10min |
-| **Now Playing** | Current track with animated equalizer | Bottom-left | 5s |
-| **Disk Usage** | APFS storage usage | Left side | 2min |
-| **Memory Usage** | Available memory | Left side | 5s |
-| **CPU Usage** | Processor load | Left side | 5s |
-| **Battery Level** | Charge percentage | Left side | 1min |
-| **Brightness Level** | Display brightness | Right side | 5s |
-| **Day Progress** | Day elapsed | Right side | 1min |
-| **Volume Level** | Output volume | Right side | 5s |
-| **Wi-Fi Signal** | Network strength | Right side | 1min |
+| **Clock** | Date and time | Top center | 1 s |
+| **Weather** | Condition icon (day/night aware) and temperature | Bottom right | 10 min |
+| **Now Playing** | Current track with an animated equalizer; falls back to idle text when nothing plays | Bottom left | 5 s |
+| **Disk Usage** | APFS storage usage | Left side | 2 min |
+| **Memory Usage** | Free memory | Left side | 5 s |
+| **CPU Usage** | Processor load | Left side | 5 s |
+| **Battery Level** | Charge percentage | Left side | 1 min |
+| **Brightness Level** | Built-in display brightness | Right side | 5 s |
+| **Day Progress** | Day elapsed, % | Right side | 1 min |
+| **Volume Level** | Output volume | Right side | 5 s |
+| **Wi-Fi Signal** | Signal strength | Right side | 1 min |
 
-## Project Structure
+Invisible service widgets:
 
-```
-efeligne.ubersicht.widget/
-├── widget.jsx              # Compiled output (do not edit)
-├── lib/
-│   └── config.js           # User-configurable settings
-├── exec/
-│   ├── BrightnessCLI       # Brightness detection binary
-│   └── now-playing.sh      # Music players detection script
-└── src/
-    ├── widget.tsx          # Main entry point
-    ├── build.js            # Build script
-    ├── tsconfig.json       # TypeScript configuration
-    ├── biome.json          # Biome linter configuration
-    ├── package.json         # Dependencies and scripts
-    ├── uebersicht.d.ts     # TypeScript declarations for Übersicht
-    ├── helpers/            # Shared utilities
-    │   ├── const.ts        # Constants (MAX_PERCENTAGE, etc.)
-    │   ├── dispatcher.ts   # Redux-like dispatch utilities
-    │   ├── getPercentage.ts # Parse percentage from command output
-    │   ├── init.ts         # Widget initialization
-    │   ├── state.ts        # State management
-    │   ├── styles.ts       # Global CSS styles
-    │   └── toGb.ts         # KB to GB conversion
-    └── widgets/            # Widget implementations
-        ├── index.ts         # Widget registry
-        ├── Factory/         # Widget factory pattern
-        │   ├── create.tsx   # Factory function
-        │   ├── helpers.ts   # Factory utilities
-        │   └── types.ts     # TypeScript interfaces
-        ├── BatteryLevel/
-        ├── BrightnessLevel/
-        ├── Clock/           # DateLine, TimeLine, helpers, types
-        ├── CpuUsage/
-        ├── DayProgress/
-        ├── DiskUsage/
-        ├── MemoryUsage/
-        ├── NowPlaying/
-        ├── ProgressBar/     # Shared progress bar component
-        ├── Theme/           # Dark/light mode detection
-        ├── VolumeLevel/
-        ├── Weather/
-        └── WifiSignal/
-```
+- **Theme** — tracks the macOS appearance (dark/light) and restyles every widget on switch.
+- **Dock** — tracks the Dock position (bottom/left/right), size and auto-hide, and shifts the widgets so they never sit under the Dock. Nothing to do when the Dock auto-hides.
 
-## Architecture
+## Installation
 
-The widget uses a centralized architecture with widget registry:
+1. Install [Übersicht](https://github.com/felixhageloh/uebersicht).
+2. Download the release archive and unpack it so that the widget folder is named exactly:
 
-```
-┌─────────────────────────────────────────────────────┐
-│                      widget.tsx                     │
-│  ┌─────────────────────────────────────────────┐   │
-│  │ init.ts — runs all runners, sets intervals  │   │
-│  │ state.ts — centralized state + reducers     │   │
-│  │ dispatcher.ts — safe dispatch utilities     │   │
-│  └─────────────────────────────────────────────┘   │
-│                         │                           │
-│                         ▼                           │
-│  ┌─────────────────────────────────────────────┐   │
-│  │           widgets/index.ts                    │   │
-│  │     [widget1, widget2, widget3, ...]        │   │
-│  └─────────────────────────────────────────────┘   │
-│                         │                           │
-│         ┌───────────────┼───────────────┐         │
-│         ▼               ▼               ▼         │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-│  │  Battery   │  │   Clock    │  │   Weather  │  │
-│  │  Widget    │  │   Widget   │  │   Widget   │  │
-│  └────────────┘  └────────────┘  └────────────┘  │
-└─────────────────────────────────────────────────────┘
-```
+   ```text
+   ~/Library/Application Support/Übersicht/widgets/efeligne.ubersicht.widget/
+   ```
 
-### Widget Interface
+   The folder name is fixed — the widget resolves `config.json` and its helper scripts relative to it.
 
-Each widget exports an object created via the `create` factory:
+   The folder must contain:
 
-```typescript
-{
-  refreshTimeout,  // Update interval in milliseconds
-  type,            // Event type for the dispatcher
-  stateKey,        // Key in global state object
-  runner,          // Optional custom data fetcher
-  reducer,         // Auto-generated by factory
-  widget           // React component
-}
-```
+   ```text
+   efeligne.ubersicht.widget/
+   ├── widget.jsx      # the widget
+   ├── config.json     # your settings
+   └── exec/
+       ├── BrightnessCLI
+       └── weather.sh
+   ```
 
-### Custom Runners
+3. For **Now Playing**, install [nowplaying-cli](https://github.com/kirtan-shah/nowplaying-cli):
 
-Some widgets use custom runners for special behavior:
+   ```bash
+   brew install nowplaying-cli
+   ```
 
-- **Weather** — caches last successful result for offline use
-- **DayProgress** — calculates progress via JavaScript (no shell command)
-- **Theme** — uses custom command for macOS appearance detection
+   On Apple Silicon the binary lives at `/opt/homebrew/bin/nowplaying-cli` (the default in `config.json`); on Intel Macs set `nowPlaying.cliPath` to `/usr/local/bin/nowplaying-cli`.
+
+4. Enable the widget in the Übersicht menu.
 
 ## Configuration
 
-Edit `lib/config.js` to customize the widget:
+All settings live in `config.json` next to `widget.jsx`. Edit the file and press **Refresh** in Übersicht — no rebuild needed. The file must be valid JSON; if it is missing or malformed, built-in defaults are used.
 
-```javascript
-export const config = {
-  colors: {
-    fg: '#111111',       // Text color (light mode)
-    fgDark: '#BBD2E7',   // Text color (dark mode)
-    track: '#777777',     // Progress bar background
-    trackDark: '#777777',
-  },
-  icons: {
-    // Nerd Font icon codes for each widget
-    battery: '\uF240',
-    brightness: '\uF042',
-    cpu: '\uF2DB',
-    // ... more icons
-    players: {
-      spotify: '\uF1BC',
-      music: '\uF001',
-      vlc: '\uF008',
-      swinsian: '\uF025',
-      vox: '\uF025',
-    },
-  },
-  refresh: {
-    clock: 1000,          // 1 second
-    weather: 600000,      // 10 minutes
-    nowPlaying: 5000,
-    // ... more intervals (in ms)
-  },
-  positions: {
-    disk: { top: '5rem', side: 'left' },
-    volume: { top: '5rem', side: 'right' },
-    memory: { top: '7.5rem', side: 'left' },
-    // ... widget positions
-  },
-  weather: {
-    location: 'Saint_Petersburg,Russia',  // wttr.in format
-  },
-};
+### `colors`
+
+Text and progress bar colors for the light and dark appearances.
+
+```json
+"colors": {
+  "fg": "#111111",
+  "fgDark": "#BBD2E7",
+  "track": "#777777",
+  "trackDark": "#777777"
+}
 ```
 
-## Usage Notes
+- `fg` / `fgDark` — text, icons and bar fill (`fgDark` is used in dark mode);
+- `track` / `trackDark` — the progress bar background.
 
-- **Weather** — queries [wttr.in](https://wttr.in). Requires internet.
-  Shows cached data when offline, `N/A` when unavailable.
+### `refresh`
 
-- **Now Playing** — supports Spotify, Apple Music, VLC, Swinsian, VOX.
-  Only one active player is detected at a time.
+Update intervals in milliseconds. Defaults: `clock` 1000, `weather` 600000 (10 min), `nowPlaying` 5000, `batteryLevel` 60000, `brightnessLevel` 5000, `cpuUsage` 5000, `dayProgress` 60000, `diskUsage` 120000, `theme` 10000, `memoryUsage` 5000, `volumeLevel` 5000, `wifiSignal` 60000, `docksSize` 5000.
 
-- **Volume** — requires software volume control. External monitors
-  without audio support show `N/A`.
+### `weather`
 
-- **Brightness** — detects only built-in display brightness.
-  External monitors are not supported.
+```json
+"weather": {
+  "location": "Saint_Petersburg,Russia",
+  "cacheFile": "/tmp/weather.cache"
+}
+```
 
-- **Disk** — tracks only APFS volumes. Other filesystems (HFS+,
-  exFAT, etc.) are ignored.
+- `location` — any [wttr.in](https://wttr.in) location (`City`, `City,Country`, `~latitude,longitude`).
+- `cacheFile` — weather cache base path. The actual cache file is derived from it and the location, so changing `location` never serves stale weather.
 
-- Widgets may display `N/A` when underlying commands fail
-  (no battery on desktop Mac, unsupported audio device, etc.).
+### `nowPlaying`
+
+```json
+"nowPlaying": {
+  "cliPath": "/opt/homebrew/bin/nowplaying-cli"
+}
+```
+
+Path to the `nowplaying-cli` binary (see Installation).
+
+### `positions`
+
+Vertical placement of the progress bar widgets, in CSS units. Each entry is `{ "top": "…", "side": "left" | "right" }`. Keys: `disk` (5 rem left), `volume` (5 rem right), `memory` (7.5 rem left), `brightness` (7.5 rem right), `cpu` (10 rem left), `wifi` (10 rem right), `battery` (12.5 rem left), `dayProgress` (12.5 rem right).
+
+### `progressBar`
+
+```json
+"progressBar": { "height": "2px" }
+```
+
+Thickness of the progress bar track.
+
+### Disabling widgets
+
+Any widget can be turned off in `config.json` — it stops polling and disappears from the screen:
+
+```json
+"widgets": {
+  "disabled": ["nowPlaying", "diskUsage"]
+}
+```
+
+Use the exact names from the table below (copy them carefully — the file is strict JSON, names are case-sensitive):
+
+| Name | What it is |
+| --- | --- |
+| `batteryLevel` | Battery charge indicator |
+| `brightnessLevel` | Display brightness indicator |
+| `clock` | Clock and date |
+| `cpuUsage` | CPU load indicator |
+| `dayProgress` | Day elapsed indicator |
+| `diskUsage` | Disk usage indicator |
+| `dock` | Dock tracking (position/size/auto-hide). Disabling it turns off the Dock-avoidance shifts |
+| `memoryUsage` | Memory indicator |
+| `nowPlaying` | Now playing widget |
+| `volumeLevel` | Volume indicator |
+| `weather` | Weather widget |
+| `wifiSignal` | Wi-Fi signal indicator |
+| `theme` | macOS appearance tracking. Disabling it pins every widget to the light appearance |
+
+## Behavior notes
+
+- **Weather** queries [wttr.in](https://wttr.in) and caches the response for `refresh.weather` minutes. When offline it keeps showing the last successful reading; without any cache it shows `N/A`.
+- **Now Playing** reads the system-wide now playing info, so it works with any player (Music, Spotify, browsers, …). While playing it shows the track and animates the equalizer; on pause or silence it shows `Nothing playing` with idle bars. Change that text in `src/widgets/NowPlaying/NowPlaying.tsx` (`NOTHING_PLAYING`) and rebuild.
+- **N/A** appears when a command cannot produce a value (desktop Mac without a battery, external display without brightness or volume, unsupported Wi-Fi, …).
+- **Dock**: widgets keep a 1 rem margin from the screen edge; when the Dock is visible on the left/right/bottom, the widgets on that side shift by the Dock size (`tilesize` plus padding). With auto-hide enabled nothing shifts.
 
 ## Development
 
-Source TypeScript is in `src/` and must be built to `widget.jsx`:
+Source lives in `src/` (TypeScript) and is bundled into `widget.jsx`:
 
 ```bash
 cd src
-npm install          # Install dependencies
-npm run build        # Production build
-npm run check        # Lint + format + fix (Biome)
-npm run format       # Format only (Biome)
+npm install
+npm run build   # bundles to ../widget.jsx, creates ../config.json if missing
+npm run lint    # Biome
 ```
 
-After building, refresh Übersicht to reload the widget.
+After building, refresh Übersicht.
+
+Pushing a `v*` tag (e.g. `v1.2.0`) triggers the release workflow: it installs dependencies, builds and assembles the distribution (`widget.jsx` + `config.json` + `exec/`), packs it into `efeligne.ubersicht.widget.zip` and attaches the archive to a GitHub Release.
+
+Layout: `src/widgets/` holds one folder per widget — each exposes a small `createX(config)` factory; `src/widgets/index.ts` is the registry (names used in `widgets.disabled`); `src/helpers/` contains the state store, the async bootstrap (config loading → widget registration → runners) and the theme context.
 
 ## Fonts
 
-Required fonts (install via Homebrew or download):
-
-```bash
-brew install font-jetbrains-nerd-font font-snell-roundhand font-new-york
-```
-
-- **JetBrainsMono Nerd Font** — widget icons
-- **Snell Roundhand** — clock display
-- **New York** — day name
-- **Courier New** — time digits
+- **Snell Roundhand** and **New York** — built into macOS, used by the clock.
+- Monospace text uses **JetBrainsMono Nerd Font** when installed and falls back to **Courier New** otherwise — no font installation is required for icons (they are inline SVG).

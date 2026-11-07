@@ -1,46 +1,88 @@
-import { run } from 'uebersicht';
-import { NO_DATA } from '@/helpers/const';
-import type { Dispatch } from '@/helpers/dispatcher';
-import { config } from '@/lib/config';
-import type { WeatherIcons, WeatherRules } from '@/widgets/Weather/types';
+import {
+  CloudLightningLine,
+  CloudsLine,
+  DrizzleLine,
+  FogLine,
+  HailLine,
+  HazeLine,
+  HeavyRainLine,
+  MoonCloudyLine,
+  MoonLine,
+  RainLine,
+  SnowLine,
+  SquareLine,
+  SunCloudyLine,
+  SunLine,
+  ThunderstormLine,
+} from '@/icons';
+import type { Config } from '@/lib/config';
+import type { WeatherIcons, WeatherIconSet, WeatherRules } from '@/widgets/Weather/types';
 
-const WEATHER_RULES = [
+const WEATHER_RULES: WeatherRules = [
   ['clear', ['clear', 'sunny']],
+  ['partlyCloudy', ['partly']],
   ['cloudy', ['cloud', 'overcast']],
-  ['rain', ['rain', 'drizzle', 'shower']],
-  ['snow', ['snow', 'sleet', 'blizzard']],
   ['thunder', ['thunder', 'storm']],
-  ['fog', ['fog', 'mist', 'haze']],
-] as const satisfies WeatherRules;
+  ['lightning', ['lightning']],
+  ['sleet', ['sleet', 'hail']],
+  ['snow', ['snow', 'blizzard']],
+  ['drizzle', ['drizzle']],
+  ['heavyRain', ['heavy']],
+  ['rain', ['rain', 'shower']],
+  ['haze', ['haze']],
+  ['fog', ['fog', 'mist']],
+];
 
-let cachedOutput: string | null = null;
+const MS_IN_MINUTE = 60_000;
+const UNSAFE_FILENAME_CHARS = /[^a-z0-9]+/gi;
+
+const same = (icon: WeatherIconSet['day']): WeatherIconSet => ({ day: icon, night: icon });
+
+const WEATHER_ICONS: WeatherIcons = {
+  clear: { day: SunLine, night: MoonLine },
+  partlyCloudy: { day: SunCloudyLine, night: MoonCloudyLine },
+  cloudy: same(CloudsLine),
+  thunder: same(ThunderstormLine),
+  lightning: same(CloudLightningLine),
+  sleet: same(HailLine),
+  snow: same(SnowLine),
+  drizzle: same(DrizzleLine),
+  heavyRain: same(HeavyRainLine),
+  rain: same(RainLine),
+  haze: same(HazeLine),
+  fog: same(FogLine),
+  unknown: same(SquareLine),
+};
 
 export const TYPE = 'SET_WEATHER';
 
-export const getWeatherIcon = (condition: string, icons: WeatherIcons) => {
+export const getWeatherIcon = (condition: string, isNight: boolean): WeatherIconSet['day'] => {
   const c = condition.toLowerCase();
 
   for (const [key, keywords] of WEATHER_RULES) {
     if (keywords.some((keyword) => c.includes(keyword))) {
-      return icons[key];
+      const icons = WEATHER_ICONS[key];
+
+      if (isNight) {
+        return icons.night;
+      }
+
+      return icons.day;
     }
   }
 
-  return icons.unknown;
+  return WEATHER_ICONS.unknown.day;
 };
 
-export const cmd = `curl -fsS 'wttr.in/${config.weather.location}?format=%C|%t' 2>/dev/null || echo "N/A|N/A"`;
+export const buildCmd = (cfg: Config) => {
+  const { location, cacheFile } = cfg.weather;
+  const ttlMinutes = Math.floor(cfg.refresh.weather / MS_IN_MINUTE);
+  const locationCacheFile = `${cacheFile}.${location.replace(UNSAFE_FILENAME_CHARS, '_')}`;
 
-export const getRunner = (dispatch: Dispatch) => {
-  run(cmd).then((output) => {
-    const data = output.trim();
-    if (data !== `${NO_DATA}|${NO_DATA}` && data !== cachedOutput) {
-      cachedOutput = data;
-      dispatch({ type: TYPE, data });
-    } else if (cachedOutput === null) {
-      dispatch({ type: TYPE, data: `${NO_DATA}|${NO_DATA}` });
-    } else {
-      dispatch({ type: TYPE, data: cachedOutput });
-    }
-  });
+  return [
+    `WEATHER_LOCATION='${location}'`,
+    `WEATHER_CACHE_FILE='${locationCacheFile}'`,
+    `WEATHER_TTL='${ttlMinutes}'`,
+    'efeligne.ubersicht.widget/exec/weather.sh',
+  ].join(' ');
 };

@@ -1,5 +1,4 @@
 import { css } from 'uebersicht';
-import { config } from '@/lib/config';
 
 export const styles = css`
   @keyframes blink {
@@ -27,9 +26,9 @@ export const styles = css`
 
   .nowPlaying {
     position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    color: ${config.colors.fg};
+    bottom: calc(1rem + var(--dock-bottom-extra, 0px));
+    left: calc(1rem + var(--dock-left-extra, 0px));
+    color: var(--fg);
     font-family: 'JetBrainsMono Nerd Font', 'Courier New', monospace;
     font-size: 1rem;
     letter-spacing: 0.08rem;
@@ -38,10 +37,13 @@ export const styles = css`
     text-overflow: ellipsis;
     max-width: 45vw;
     opacity: 1;
-    transition: opacity 0.4s ease;
+    transition:
+      opacity 0.4s ease,
+      bottom 0.3s ease,
+      left 0.3s ease;
   }
   .nowPlaying.dark {
-    color: ${config.colors.fgDark};
+    color: var(--fg-dark);
   }
 
   .nowPlaying > ul {
@@ -55,19 +57,22 @@ export const styles = css`
   .nowPlaying > ul > li {
     display: inline-block;
     width: 3px;
-    height: 10px;
+    height: 2px;
     margin-right: 2px;
-    background: ${config.colors.fg};
+    background: var(--fg);
     border-radius: 2px;
     transform-origin: bottom;
+  }
+  .nowPlaying.playing > ul > li {
+    height: 10px;
     animation: wave 0.5s ease-in-out infinite;
   }
   .nowPlaying.dark > ul > li {
-    background: ${config.colors.fgDark};
+    background: var(--fg-dark);
   }
 
   .clock {
-    color: ${config.colors.fg};
+    color: var(--fg);
     font-family: 'Snell Roundhand';
     font-size: 2rem;
     box-sizing: border-box;
@@ -84,7 +89,7 @@ export const styles = css`
   }
 
   .clock.dark {
-    color: ${config.colors.fgDark};
+    color: var(--fg-dark);
   }
 
   .clock > .dayName {
@@ -105,14 +110,14 @@ export const styles = css`
   }
 
   .clock > .timeBlock > hr {
-    background-color: ${config.colors.fg};
+    background-color: var(--fg);
     flex-grow: 1;
     height: 2px;
     border: 0;
   }
 
   .clock.dark > .timeBlock > hr {
-    background-color: ${config.colors.fgDark};
+    background-color: var(--fg-dark);
   }
 
   .clock > .timeBlock .colon {
@@ -129,32 +134,34 @@ export const styles = css`
     align-items: center;
     height: auto;
     gap: 1rem;
+    transition:
+      left 0.3s ease,
+      right 0.3s ease;
   }
 
   .progressBar > .track {
     position: relative;
     width: 100%;
-    background: ${config.colors.track};
+    background: var(--track);
   }
 
   .progressBar.dark > .track {
-    background: ${config.colors.trackDark};
+    background: var(--track-dark);
   }
 
   .progressBar.left {
-    left: 1rem;
+    left: calc(1rem + var(--dock-left-extra, 0px));
   }
 
   .progressBar.right {
-    right: 1rem;
+    right: calc(1rem + var(--dock-right-extra, 0px));
   }
 
   .progressBar > .label {
-    color: ${config.colors.fg};
+    color: var(--fg);
     background: transparent;
     box-sizing: border-box;
     position: relative;
-    padding: 0 0 0 1rem;
     text-align: right;
     font-family: 'JetBrainsMono Nerd Font';
     font-size: 1rem;
@@ -163,15 +170,22 @@ export const styles = css`
     flex-direction: row-reverse;
     justify-content: start;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .progressBar.dark > .label {
-    color: ${config.colors.fgDark};
+    color: var(--fg-dark);
   }
 
   .progressBar > .label > .icon {
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .progressBar > .label > .icon > svg {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .progressBar > .label > .value {
@@ -179,32 +193,42 @@ export const styles = css`
   }
 
   .progressBar > .track > .bar {
-    background: ${config.colors.fg};
+    background: var(--fg);
   }
 
   .progressBar.dark > .track > .bar {
-    background: ${config.colors.fgDark};
+    background: var(--fg-dark);
   }
 
   .weather {
-    color: ${config.colors.fg};
+    color: var(--fg);
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: calc(1rem + var(--dock-bottom-extra, 0px));
+    right: calc(1rem + var(--dock-right-extra, 0px));
     font-family: 'JetBrainsMono Nerd Font', 'Courier New', monospace;
     font-size: 1rem;
     letter-spacing: 0.08rem;
     white-space: nowrap;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    transition:
+      bottom 0.3s ease,
+      right 0.3s ease;
   }
 
   .weather.dark {
-    color: ${config.colors.fgDark};
+    color: var(--fg-dark);
   }
 
   .weather > .icon {
-    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .weather > .icon > svg {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 `;

@@ -1,5 +1,8 @@
+import type { React } from 'uebersicht';
+import type { IconProps } from '@/icons';
+
 export interface ProgressBarProps {
-  label: string;
+  icon: React.ComponentType<IconProps>;
   percentage: string;
   top: number | string;
   side?: string;

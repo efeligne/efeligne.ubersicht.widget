@@ -2,7 +2,6 @@ import type { Dispatch, DispatchProps } from '@/helpers/dispatcher';
 import type { State } from '@/helpers/state';
 
 export interface ComponentProps {
-  theme: string;
   output?: string;
 }
 

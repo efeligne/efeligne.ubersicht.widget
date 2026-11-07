@@ -1,16 +1,29 @@
 import { type Dispatch, safeInterval, safeRun } from '@/helpers/dispatcher';
-import { widgets } from '@/widgets';
+import { LOADING } from '@/helpers/state';
+import { loadConfig } from '@/lib/config';
+import { getWidgets, registerWidgets } from '@/widgets';
+
+let intervals: (NodeJS.Timeout | string | number | undefined)[] = [];
 
 const dispatchers = (dispatch: Dispatch) => {
-  for (const widget of widgets) {
-    safeRun(() => widget.runner(dispatch));
-  }
+  loadConfig().then((cfg) => {
+    registerWidgets(cfg);
 
-  return widgets.map((widget) => safeInterval(() => widget.runner(dispatch), widget.refreshTimeout));
+    for (const widget of getWidgets()) {
+      dispatch({ type: widget.type, data: LOADING });
+    }
+
+    for (const widget of getWidgets()) {
+      safeRun(() => widget.runner(dispatch));
+    }
+
+    intervals = getWidgets().map((widget) => safeInterval(() => widget.runner(dispatch), widget.refreshTimeout));
+  });
 };
 
-const destroy = (intervals: (NodeJS.Timeout | string | number | undefined)[]) => {
+const destroy = () => {
   intervals.forEach(clearInterval);
+  intervals = [];
 };
 
 export const initialize = { dispatchers, destroy };

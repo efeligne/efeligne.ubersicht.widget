@@ -1,0 +1,46 @@
+{
+  "colors": {
+    "fg": "#111111",
+    "fgDark": "#BBD2E7",
+    "track": "#777777",
+    "trackDark": "#777777"
+  },
+  "refresh": {
+    "clock": 1000,
+    "weather": 600000,
+    "nowPlaying": 5000,
+    "batteryLevel": 60000,
+    "brightnessLevel": 5000,
+    "cpuUsage": 5000,
+    "dayProgress": 60000,
+    "diskUsage": 120000,
+    "theme": 10000,
+    "memoryUsage": 5000,
+    "volumeLevel": 5000,
+    "wifiSignal": 60000,
+    "docksSize": 5000
+  },
+  "weather": {
+    "location": "Saint_Petersburg,Russia",
+    "cacheFile": "/tmp/weather.cache"
+  },
+  "nowPlaying": {
+    "cliPath": "/opt/homebrew/bin/nowplaying-cli"
+  },
+  "positions": {
+    "disk": { "top": "5rem", "side": "left" },
+    "volume": { "top": "5rem", "side": "right" },
+    "memory": { "top": "7.5rem", "side": "left" },
+    "brightness": { "top": "7.5rem", "side": "right" },
+    "cpu": { "top": "10rem", "side": "left" },
+    "wifi": { "top": "10rem", "side": "right" },
+    "battery": { "top": "12.5rem", "side": "left" },
+    "dayProgress": { "top": "12.5rem", "side": "right" }
+  },
+  "widgets": {
+    "disabled": []
+  },
+  "progressBar": {
+    "height": "2px"
+  }
+}

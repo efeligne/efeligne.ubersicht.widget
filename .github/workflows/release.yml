@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src
+        run: npm ci
+
+      - name: Lint
+        working-directory: src
+        run: npm run lint
+
+      - name: Build
+        working-directory: src
+        run: npm run build
+
+      - name: Assemble distribution
+        run: |
+          mkdir -p dist/efeligne.ubersicht.widget/exec
+          cp widget.jsx config.json dist/efeligne.ubersicht.widget/
+          cp exec/BrightnessCLI exec/weather.sh dist/efeligne.ubersicht.widget/exec/
+          chmod +x dist/efeligne.ubersicht.widget/exec/weather.sh
+
+      - name: Archive
+        working-directory: dist
+        run: zip -r efeligne.ubersicht.widget.zip efeligne.ubersicht.widget
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/efeligne.ubersicht.widget.zip
+          generate_release_notes: true

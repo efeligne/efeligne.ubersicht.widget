@@ -1,0 +1,8 @@
+import type { React } from 'uebersicht';
+import { Icon, type IconProps } from '@/icons/Icon';
+
+export const Battery4Line: React.FC<IconProps> = (props) => (
+  <Icon {...props}>
+    <path d='M18 6a2 2 0 0 1 1.995 1.85L20 8v1a2 2 0 0 1 1.995 1.85L22 11v2a2 2 0 0 1-1.85 1.995L20 15v1a2 2 0 0 1-1.85 1.995L18 18H4a2 2 0 0 1-1.995-1.85L2 16V8a2 2 0 0 1 1.85-1.995L4 6zm0 2H4v8h14zM6 9a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0v-4a1 1 0 0 1 1-1m3 0a1 1 0 0 1 .993.883L10 10v4a1 1 0 0 1-1.993.117L8 14v-4a1 1 0 0 1 1-1m3 0a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0v-4a1 1 0 0 1 1-1m3 0a1 1 0 0 1 .993.883L16 10v4a1 1 0 0 1-1.993.117L14 14v-4a1 1 0 0 1 1-1' />
+  </Icon>
+);

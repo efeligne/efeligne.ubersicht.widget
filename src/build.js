@@ -25,3 +25,8 @@ await esbuild.build({
   minify: true,
   plugins: [],
 });
+
+const distConfigPath = '../config.json';
+if (!fs.existsSync(distConfigPath)) {
+  fs.copyFileSync('../lib/config.defaults.json', distConfigPath);
+}
