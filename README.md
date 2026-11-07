@@ -2,6 +2,8 @@
 
 A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht): clock, weather, now playing, system monitors — with automatic dark/light theming and Dock-aware positioning.
 
+https://github.com/user-attachments/assets/251d2d97-c816-47be-adeb-20ece293ca01
+
 ## Widgets
 
 | Widget | Description | Position | Refresh |
