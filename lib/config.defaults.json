@@ -27,6 +27,9 @@
   "nowPlaying": {
     "cliPath": "/opt/homebrew/bin/nowplaying-cli"
   },
+  "brightnessLevel": {
+    "cliPath": "/opt/homebrew/bin/brightness-cli"
+  },
   "positions": {
     "disk": { "top": "5rem", "side": "left" },
     "volume": { "top": "5rem", "side": "right" },

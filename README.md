@@ -2,7 +2,7 @@
 
 A macOS desktop widget for [Übersicht](https://github.com/felixhageloh/uebersicht): clock, weather, now playing, system monitors — with automatic dark/light theming and Dock-aware positioning.
 
-https://github.com/user-attachments/assets/251d2d97-c816-47be-adeb-20ece293ca01
+<https://github.com/user-attachments/assets/251d2d97-c816-47be-adeb-20ece293ca01>
 
 ## Widgets
 
@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/251d2d97-c816-47be-adeb-20ece293ca01
 | **Memory Usage** | Free memory | Left side | 5 s |
 | **CPU Usage** | Processor load | Left side | 5 s |
 | **Battery Level** | Charge percentage | Left side | 1 min |
-| **Brightness Level** | Built-in display brightness | Right side | 5 s |
+| **Brightness Level** | Main display brightness | Right side | 5 s |
 | **Day Progress** | Day elapsed, % | Right side | 1 min |
 | **Volume Level** | Output volume | Right side | 5 s |
 | **Wi-Fi Signal** | Signal strength | Right side | 1 min |
@@ -43,7 +43,6 @@ Invisible service widgets:
    ├── widget.jsx      # the widget
    ├── config.json     # your settings
    └── exec/
-       ├── BrightnessCLI
        └── weather.sh
    ```
 
@@ -55,7 +54,16 @@ Invisible service widgets:
 
    On Apple Silicon the binary lives at `/opt/homebrew/bin/nowplaying-cli` (the default in `config.json`); on Intel Macs set `nowPlaying.cliPath` to `/usr/local/bin/nowplaying-cli`.
 
-4. Enable the widget in the Übersicht menu.
+4. For **Brightness Level**, install [brightness-cli](https://github.com/efeligne/mac-brightness-cli):
+
+   ```bash
+   brew tap efeligne/tools
+   brew install brightness-cli
+   ```
+
+   On Apple Silicon the binary lives at `/opt/homebrew/bin/brightness-cli` (the default in `config.json`); on Intel Macs set `brightnessLevel.cliPath` to `/usr/local/bin/brightness-cli`.
+
+5. Enable the widget in the Übersicht menu.
 
 ## Configuration
 
@@ -103,6 +111,16 @@ Update intervals in milliseconds. Defaults: `clock` 1000, `weather` 600000 (10 m
 
 Path to the `nowplaying-cli` binary (see Installation).
 
+### `brightnessLevel`
+
+```json
+"brightnessLevel": {
+  "cliPath": "/opt/homebrew/bin/brightness-cli"
+}
+```
+
+Path to the `brightness-cli` binary (see Installation).
+
 ### `positions`
 
 Vertical placement of the progress bar widgets, in CSS units. Each entry is `{ "top": "…", "side": "left" | "right" }`. Keys: `disk` (5 rem left), `volume` (5 rem right), `memory` (7.5 rem left), `brightness` (7.5 rem right), `cpu` (10 rem left), `wifi` (10 rem right), `battery` (12.5 rem left), `dayProgress` (12.5 rem right).
@@ -147,7 +165,8 @@ Use the exact names from the table below (copy them carefully — the file is st
 
 - **Weather** queries [wttr.in](https://wttr.in) and caches the response for `refresh.weather` minutes. When offline it keeps showing the last successful reading; without any cache it shows `N/A`.
 - **Now Playing** reads the system-wide now playing info, so it works with any player (Music, Spotify, browsers, …). While playing it shows the track and animates the equalizer; on pause or silence it shows `Nothing playing` with idle bars. Change that text in `src/widgets/NowPlaying/NowPlaying.tsx` (`NOTHING_PLAYING`) and rebuild.
-- **N/A** appears when a command cannot produce a value (desktop Mac without a battery, external display without brightness or volume, unsupported Wi-Fi, …).
+- **Brightness Level** shows the main display brightness reported by `brightness-cli`. The utility prints `0` when the brightness cannot be determined.
+- **N/A** appears when a command cannot produce a value (desktop Mac without a battery, unavailable output volume, unsupported Wi-Fi, …).
 - **Dock**: widgets keep a 1 rem margin from the screen edge; when the Dock is visible on the left/right/bottom, the widgets on that side shift by the Dock size (`tilesize` plus padding). With auto-hide enabled nothing shifts.
 
 ## Development

@@ -21,6 +21,9 @@ export interface Config {
   nowPlaying: {
     cliPath: string;
   };
+  brightnessLevel: {
+    cliPath: string;
+  };
   positions: Record<string, WidgetPosition>;
   widgets: {
     disabled: string[];
