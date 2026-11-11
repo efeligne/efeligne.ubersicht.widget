@@ -4,7 +4,7 @@ import { create } from '@/widgets/Factory/create';
 
 export const createBrightnessLevel = (cfg: Config) =>
   create({
-    cmd: 'efeligne.ubersicht.widget/exec/BrightnessCLI',
+    cmd: cfg.brightnessLevel.cliPath,
     refreshTimeout: cfg.refresh.brightnessLevel,
     type: 'SET_BRIGHTNESS_LEVEL',
     stateKey: 'brightness',
