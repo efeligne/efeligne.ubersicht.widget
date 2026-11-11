@@ -5,6 +5,17 @@ import { getWeatherIcon } from '@/widgets/Weather/helpers';
 
 const NIGHT_START = 20;
 const NIGHT_END = 7;
+const TEMPERATURE = /^[+-]*(\d+(?:\.\d+)?)(.*)$/;
+
+const formatTemperature = (temperature: string) => {
+  const match = TEMPERATURE.exec(temperature);
+
+  if (match && Number(match[1]) === 0) {
+    return `0${match[2]}`;
+  }
+
+  return temperature;
+};
 
 const isNightNow = () => {
   const hour = new Date().getHours();
@@ -28,7 +39,7 @@ export const Weather: InputWidget = ({ output }) => {
       <span className='icon'>
         <Icon />
       </span>
-      <span>{temperature}</span>
+      <span>{formatTemperature(temperature)}</span>
     </aside>
   );
 };
